@@ -1,0 +1,32 @@
+app:
+    build: .
+    ports: 
+        - "8030:8030"
+    links:
+        - db
+        - logstash
+db:
+    image: "mongo:3.3"
+elasticsearch:
+  image: elasticsearch:latest
+  command: elasticsearch -Des.network.host=0.0.0.0
+  ports:
+    - "9200:9200"
+    - "9300:9300"
+logstash:
+  image: logstash:latest
+  command: logstash -f /etc/logstash/conf.d/logstash.conf
+  volumes:
+    - ./elk/logstash/config:/etc/logstash/conf.d
+  ports:
+    - "5000:5000"
+  links:
+    - elasticsearch
+kibana:
+  build: ./elk/kibana/
+  volumes:
+    - ./elk/kibana/config/:/opt/kibana/config/
+  ports:
+    - "5601:5601"
+  links:
+    - elasticsearch
