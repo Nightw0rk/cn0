@@ -22,7 +22,7 @@ user.statics.createNewSession = function (userName, userPassword) {
                 if (err) {
                     reject(err);
                 }
-                deffer.resolve(user.session);
+                resolve(user.session);
             })
 
         })
