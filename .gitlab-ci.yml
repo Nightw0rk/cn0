@@ -11,5 +11,4 @@ test:
 deploy:
   script:
     - docker push registry.nikamiass.ru/crm:$CI_BUILD_REF_NAME
-  when:
-    - on_success
+  when: on_success
