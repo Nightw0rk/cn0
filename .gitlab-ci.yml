@@ -2,13 +2,14 @@ stages:
   - prepare
   - test
   - deploy
+
 prepare:
   stage: prepare
   script:
     - docker build -t registry.nikamiass.ru/crm:$CI_BUILD_REF_NAME .
 test:
   script:
-    - docker run -t registry.nikamiass.ru/crm:$CI_BUILD_REF_NAME node_modules/.bin/mocha
+    - docker exec -ti registry.nikamiass.ru/crm:$CI_BUILD_REF_NAME node_modules/.bin/mocha
   allow_failure: false
 deploy:
   stage: deploy
