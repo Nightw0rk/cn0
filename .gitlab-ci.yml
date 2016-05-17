@@ -10,7 +10,7 @@ prepare:
 test:
   script:
     - export NODE_ENV=TEST
-    - docker run -i registry.nikamiass.ru/crm:$CI_BUILD_REF_NAME node_modules/.bin/mocha
+    - docker run -i -e "NODE_ENV=TEST" registry.nikamiass.ru/crm:$CI_BUILD_REF_NAME node_modules/.bin/mocha
   allow_failure: false
 deploy:
   stage: deploy
