@@ -10,8 +10,8 @@ describe("testing auth module ", function () {
             .send({ name: "test", password: "test" })
             .end(function (err, res, body) {
                 should.not.exist(err);
-                res.body.status.should.equal("OK");
-                done;
+                res.body.status.should.equal("ERROR",res.body.msg);
+                done();
             })
     })
 
@@ -21,8 +21,8 @@ describe("testing auth module ", function () {
             .send({ session: "ajklsdfm" })
             .end(function (err, res, body) {
                 should.not.exist(err);
-                res.body.status.should.equal("OK");
-                done;
+                res.body.status.should.equal("ERROR",res.body.msg);
+                done();
             })
     })
 })

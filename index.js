@@ -10,7 +10,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 dns.resolve4(process.env.MONGO_HOST||'127.0.0.1',function(err,address){
-  config.db.connection_string = "mongodb://"+address.join()+"/crm"+(process.env.MONGO_REPLICA||'')
+  if(address){
+    config.db.connection_string = "mongodb://"+address.join()+"/crm"+(process.env.MONGO_REPLICA||'')
+  }
   app.use("/auth", require("./app/routes/auth"));
   app.use("/reports", require("./app/routes/reports"));
 })
