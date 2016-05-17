@@ -7,7 +7,7 @@ prepare:
     - docker build -t registry.nikamiass.ru/crm:$CI_BUILD_REF_NAME .
 test:
   script:
-    - docker run -ti registry.nikamiass.ru/crm:$CI_BUILD_REF_NAME node_modules/.bin/mocha
+    - docker run -t registry.nikamiass.ru/crm:$CI_BUILD_REF_NAME node_modules/.bin/mocha
 deploy:
   script:
     - docker push registry.nikamiass.ru/crm:$CI_BUILD_REF_NAME
