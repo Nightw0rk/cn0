@@ -9,6 +9,7 @@ prepare:
     - docker build --file="$CI_BUILD_REF_NAME" -t registry.nikamiass.ru/crm:$CI_BUILD_REF_NAME .
 test:
   script:
+    - export NODE_ENV=TEST
     - docker run -i registry.nikamiass.ru/crm:$CI_BUILD_REF_NAME node_modules/.bin/mocha
   allow_failure: false
 deploy:
