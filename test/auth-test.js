@@ -24,7 +24,8 @@ describe("testing auth module ", function () {
     })
 
     it("logout", (done) => {
-      var findOne = sinon.stub(user,'findOne',function(qu,cb){        
+      var findOne = sinon.stub(user,'findOne',function(qu,cb){
+        console.log(qu);
         cb(null,new user({name:test,passowrd:"test"}));
       });
       var save = sinon.stub(user.prototype,"save",(cb)=>{cb()});

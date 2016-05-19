@@ -38,6 +38,7 @@ user.methods.isInferior = function (user) {
 
 user.statics.getUserBySession = function (session) {
     return new q(function (resolve, reject) {
+        console.log("Find user with session",session);
         db.model("User", user).findOne({ session: session }, function (err, user) {
             if (err) {
                 return reject(err);
