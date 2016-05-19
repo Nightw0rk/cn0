@@ -23,5 +23,5 @@ var defaultReport = db.Schema({
 
 
 module.export = {
-    defualt: db.model('default', defaultReport)
+    default: db.model('default', defaultReport)
 }
