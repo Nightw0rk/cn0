@@ -28,7 +28,7 @@ var ClientUserDayli = db.Schema({
     user: user.schema,
     count: Number
 })
-ClientUserDayli.static.incClient = (user) => {
+ClientUserDayli.statics.incClient = (user) => {
     var current_date = new Date();
     db.model('user_client_dayli', ClientUserDayli).findOne(
         { day: current_date.getDate(), month: current_date.getMonth() + 1, year: current_date.getFullYear(), "user._id": user._id },
