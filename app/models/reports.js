@@ -21,7 +21,33 @@ var defaultReport = db.Schema({
     recall: Boolean, // Повторное обращение
 })
 
+var ClientUserDayli = db.Schema({
+    day: Number,
+    month: Number,
+    year: Number,
+    user: user.schema,
+    count: 1
+})
+ClientUserDayli.static.incClient = (user) => {
+    var current_date = new Date();
+    db.model('user_client_dayli', ClientUserDayli).findOne(
+        { day: current_date.getDate(), month: current_date.getMonth() + 1, year: current_date.getFullYear(), "user._id": user._id },
+        (err, reportItem) => {
+            if (err) {
+                console.log("Ошибка сохранения дневного отчета", err);
+            }
+            if (!reportItem) {
+                reportItem = new db.model('user_client_dayli', ClientUserDayli)({ day: current_date.getDate(), month: current_date.getMonth() + 1, year: current_date.getFullYear(), user: user });
+            }
+            reportItem.count += 1;
+            reportItem.save();
+        }
+    )
+}
+
 
 module.exports = {
-    default: db.model('default_report', defaultReport)
+    default: db.model('default_report', defaultReport),
+    clientUserDayli: db.model('user_client_dayli', ClientUserDayli)
+
 }

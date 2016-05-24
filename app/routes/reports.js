@@ -12,6 +12,7 @@ route.post("/add", session(), (req, res) => {
         if (err) {
             return res.send({ status: "ERROR", msg: err });
         }
+        reports.clientUserDayli.incClient(req.user);
         return res.send({ status: "OK", msg: "Отчет сохранен" });
     });
 });
@@ -75,8 +76,8 @@ route.delete("/{id}", session, (req, res) => {
     })
 })
 
-route.get("/default/today/clients", session, (req,res)=>{
-    
+route.get("/default/today/clients", session, (req, res) => {
+
 })
 
 module.exports = route;
