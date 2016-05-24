@@ -28,7 +28,7 @@ var ClientUserDayli = db.Schema({
     user: user.schema,
     count: Number
 })
-ClientUserDayli.statics.incClient = (user) => {
+ClientUserDayli.statics.incClient = (user, cb) => {
     var current_date = new Date();
     db.model('user_client_dayli', ClientUserDayli).findOne(
         { day: current_date.getDate(), month: current_date.getMonth() + 1, year: current_date.getFullYear(), "user._id": user._id },
@@ -40,7 +40,7 @@ ClientUserDayli.statics.incClient = (user) => {
                 reportItem = new db.model('user_client_dayli', ClientUserDayli)({ day: current_date.getDate(), month: current_date.getMonth() + 1, year: current_date.getFullYear(), user: user });
             }
             reportItem.count += 1;
-            reportItem.save();
+            reportItem.save(cb);
         }
     )
 }

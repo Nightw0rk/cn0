@@ -12,8 +12,9 @@ route.post("/add", session(), (req, res) => {
         if (err) {
             return res.send({ status: "ERROR", msg: err });
         }
-        reports.clientUserDayli.incClient(req.user);
-        return res.send({ status: "OK", msg: "Отчет сохранен" });
+        reports.clientUserDayli.incClient(req.user,()=>{
+           return res.send({ status: "OK", msg: "Отчет сохранен" }); 
+        });        
     });
 });
 
