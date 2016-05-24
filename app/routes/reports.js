@@ -1,20 +1,24 @@
 var express = require("express");
 var session = require("../middleware/session");
 var reports = require('../models/reports');
+var async = require("async");
 var route = express.Router();
 
 route.post("/add", session(), (req, res) => {
     var data = req.body;
     data.author = req.user
+    var seqArray = [
+        (callback) => { return reports.clientUserDayli.incClient(req.user, callback) }
+    ]
     delete data.author.session;
     var item = new reports.default(data);
     item.save((err) => {
         if (err) {
             return res.send({ status: "ERROR", msg: err });
         }
-        reports.clientUserDayli.incClient(req.user,()=>{
-           return res.send({ status: "OK", msg: "Отчет сохранен" }); 
-        });        
+        var sequnce = async.series(seqArray, () => {
+            return res.send({ status: "OK", msg: "Отчет сохранен" });
+        })
     });
 });
 

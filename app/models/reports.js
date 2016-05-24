@@ -30,6 +30,7 @@ var ClientUserDayli = db.Schema({
 })
 ClientUserDayli.statics.incClient = (user, cb) => {
     var current_date = new Date();
+    console.log("update client dayli report");
     db.model('user_client_dayli', ClientUserDayli).findOne(
         { day: current_date.getDate(), month: current_date.getMonth() + 1, year: current_date.getFullYear(), "user._id": user._id },
         (err, reportItem) => {
