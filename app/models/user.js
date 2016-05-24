@@ -9,17 +9,21 @@ var user = db.Schema({
 })
 
 user.statics.createNewSession = function (userName, userPassword) {
+    console.log("begin auth");
     return new q(function (resolve, reject) {
         db.model("User", user).findOne({ name: userName, password: userPassword }, function (err, user) {
             if (err) {
+                console.log("auth err",err);
                 return reject(err);
             }
             if (!user) {
+                console.log("auth err","not users");
                 return reject({ status: "ERROR", msg: "Пользователь не найден" });
             }
             user.session = uuid.v4();
             user.save(function (err) {
                 if (err) {
+                    console.log("save auth err",err);
                     reject(err);
                 }
                 resolve(user.session);
