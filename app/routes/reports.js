@@ -75,4 +75,8 @@ route.delete("/{id}", session, (req, res) => {
     })
 })
 
+route.get("/default/today/clients", session, (req,res)=>{
+    
+})
+
 module.exports = route;
