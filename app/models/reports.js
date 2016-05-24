@@ -22,6 +22,6 @@ var defaultReport = db.Schema({
 })
 
 
-module.export = {
+module.exports = {
     default: db.model('default_report', defaultReport)
 }

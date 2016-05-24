@@ -20,6 +20,8 @@
   },
   "devDependencies": {
     "mocha": "^2.4.5",
+    "mongoose-mock": "^0.4.0",
+    "proxyquire": "^1.7.9",
     "should": "^8.3.1",
     "sinon": "^1.17.4",
     "sinon-mongoose": "^1.2.1",
