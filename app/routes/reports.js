@@ -81,8 +81,14 @@ route.delete("/{id}", session, (req, res) => {
     })
 })
 
-route.get("/default/today/clients", session, (req, res) => {
-
+route.get("/default/today/clients", session(), (req, res) => {
+    reports.clientUserDayli.getToday(req.user)
+        .then((data) => {
+            return res.send({ status: "OK", data: data });
+        })
+        .catch((err) => {
+            return res.send({ status: "ERROR", msg: err });
+        })
 })
 
 module.exports = route;

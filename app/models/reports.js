@@ -41,10 +41,28 @@ ClientUserDayli.statics.incClient = (user, cb) => {
             if (!reportItem) {
                 reportItem = new local_model({ day: current_date.getDate(), month: current_date.getMonth() + 1, year: current_date.getFullYear(), user: user });
             }
-            reportItem.count += 1;
+            reportItem.count = (reportItem.count || 0) + 1;
             reportItem.save(cb);
         }
     )
+}
+ClientUserDayli.statics.getToday = function(user) {
+    return new q(function(resolve, reject) {
+        console.log("update client dayli report");
+        var local_model = db.model('user_client_dayli', ClientUserDayli);
+        var current_date = new Date();
+        local_model.findOne(
+            { day: current_date.getDate(), month: current_date.getMonth() + 1, year: current_date.getFullYear(), "user._id": user._id },
+            (err, reportItem) => {
+                if (err) {
+                    return reject(err);
+                }
+                if (!reportItem) {
+                    return resolve(0);
+                }
+                return resolve(reportItem.count);
+            });
+    });
 }
 
 
