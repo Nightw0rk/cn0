@@ -26,7 +26,7 @@ var ClientUserDayli = db.Schema({
     month: Number,
     year: Number,
     user: user.schema,
-    count: 1
+    count: Number
 })
 ClientUserDayli.static.incClient = (user) => {
     var current_date = new Date();
