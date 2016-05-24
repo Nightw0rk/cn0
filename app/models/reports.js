@@ -31,14 +31,15 @@ var ClientUserDayli = db.Schema({
 ClientUserDayli.statics.incClient = (user, cb) => {
     var current_date = new Date();
     console.log("update client dayli report");
-    db.model('user_client_dayli', ClientUserDayli).findOne(
+    var local_model = db.model('user_client_dayli', ClientUserDayli);
+    local_model.findOne(
         { day: current_date.getDate(), month: current_date.getMonth() + 1, year: current_date.getFullYear(), "user._id": user._id },
         (err, reportItem) => {
             if (err) {
                 console.log("Ошибка сохранения дневного отчета", err);
             }
             if (!reportItem) {
-                reportItem = new db.model('user_client_dayli', ClientUserDayli)({ day: current_date.getDate(), month: current_date.getMonth() + 1, year: current_date.getFullYear(), user: user });
+                reportItem = new local_model({ day: current_date.getDate(), month: current_date.getMonth() + 1, year: current_date.getFullYear(), user: user });
             }
             reportItem.count += 1;
             reportItem.save(cb);
