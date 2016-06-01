@@ -1,17 +1,37 @@
 var db = require("../middleware/db");
 var q = require("bluebird");
 var uuid = require("node-uuid");
+var deportament  = db.Schema({
+  Id:Number,
+  ParentId:Number,
+  Title:String,
+  ShortTitle:String,
+  HeadId:Number,
+  IsTrgPoint:Boolean
+})
+
+var sotrud = db.Schema({
+    Id:Number,
+    Family:String,
+    SecondName:String,
+    Name:String,
+    Profession:String,
+    Deportament:deportament
+})
 
 var user = db.Schema({
-    name: String,
-    password: String,
-    session: String
+    Title: String,
+    Password: String,
+    session:  String
+    NameType: String
+    Sotrud:sotrud,
+    NameOfLevelAccess:String
 })
 
 user.statics.createNewSession = function (userName, userPassword) {
     console.log("begin auth");
     return new q(function (resolve, reject) {
-        db.model("User", user).findOne({ name: userName, password: userPassword }, function (err, user) {
+        db.model("User", user).findOne({ Title: userName, Password: userPassword }, function (err, user) {
             if (err) {
                 console.log("auth err",err);
                 return reject(err);

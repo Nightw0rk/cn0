@@ -8,7 +8,8 @@ route.post("/add", session(), (req, res) => {
     var data = req.body;
     data.author = req.user
     var seqArray = [
-        (callback) => { return reports.clientUserDayli.incClient(req.user, callback) }
+        (callback) => { return reports.clientUserDayli.incClient(req.user, callback),
+        (callback) => { return reports.FollowingWeekReport.incClient(req.user,data.follow,callback) }
     ]
     delete data.author.session;
     var item = new reports.default(data);
