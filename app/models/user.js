@@ -22,8 +22,8 @@ var sotrud = db.Schema({
 var user = db.Schema({
     Title: String,
     Password: String,
-    session:  String
-    NameType: String
+    session:  String,
+    NameType: String,
     Sotrud:sotrud,
     NameOfLevelAccess:String
 })
@@ -46,7 +46,7 @@ user.statics.createNewSession = function (userName, userPassword) {
                     console.log("save auth err",err);
                     reject(err);
                 }
-                resolve(user.session);
+                resolve(user);
             })
 
         })

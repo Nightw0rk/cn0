@@ -8,10 +8,10 @@ var route = express.Router();
  */
 route.post("/login", function (req, res) {
     user.createNewSession(req.body.name, req.body.password)
-        .then((session) => {
-            res.send({ status: "OK", msg: "Авторизация успешна", session: session });
+        .then(function (user) {
+            res.send({ status: "OK", msg: "Авторизация успешна", result: { session: user.session, type: user.NameType } });
         })
-        .catch((err, v, d) => {
+        .catch(function (err, v, d) {
             res.send(err);
         });
 })
