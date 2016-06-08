@@ -173,7 +173,10 @@ ClientUserDayli.statics.getToday = function (user) {
                     if (!reportItem) {
                         return resolve(0);
                     }
-                    resolve(reportItem[0].count);
+                    if(!reportItem.length){
+                        resolve(0);
+                    }
+                    resolve(reportItem[0].count || 0);
                 })
             } else {
                 resolve(0);
