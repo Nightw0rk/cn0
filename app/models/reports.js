@@ -174,9 +174,9 @@ ClientUserDayli.statics.getToday = function (user) {
                         return resolve(0);
                     }
                     if(!reportItem.length){
-                        resolve(0);
-                    }
-                    resolve(reportItem[0].count || 0);
+                        return resolve(0);
+                    }                    
+                    return resolve(reportItem[0].count || 0);
                 })
             } else {
                 resolve(0);
