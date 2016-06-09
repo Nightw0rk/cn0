@@ -1,6 +1,6 @@
 var q = require("bluebird");
 module.exports = {
-    getClientByRangeToConsultant = params => {
+    getClientByRangeToConsultant : params => {
         return new q((resolve, reject) => {
             params.model.find({
                 "stamp": { "$gte": params.range.start, "$lte": params.range.end },
@@ -17,7 +17,7 @@ module.exports = {
             });
         });
     },
-    getClientByRangeToHeadSalon = params => {
+    getClientByRangeToHeadSalon : params => {
         return new q((resolve, reject) => {
             local_model.aggregate([
                 {
@@ -50,7 +50,7 @@ module.exports = {
             })
         });
     },
-    getClientByRangeToHeadBranch = params => {
+    getClientByRangeToHeadBranch : params => {
         return new q((resolve, reject) => {
             local_model.aggregate([
                 {
@@ -83,7 +83,7 @@ module.exports = {
             })
         });
     },
-    getClientByRangeToMaster = params => {
+    getClientByRangeToMaster : params => {
         local_model.aggregate([
             {
                 $match: {
