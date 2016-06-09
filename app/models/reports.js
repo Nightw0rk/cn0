@@ -2,6 +2,7 @@ var db = require("../middleware/db");
 var user = require("./user");
 var q = require("bluebird");
 var uuid = require("node-uuid");
+var reportUtils = require('../utils/reports')
 
 function getWeekNumber(d) {
     // Copy date so don't modify original
@@ -38,6 +39,7 @@ var defaultReport = db.Schema({
 });
 
 var ClientUserDayli = db.Schema({
+    stamp: { type: Date, default: Date.now() },
     day: Number,
     month: Number,
     year: Number,
@@ -46,10 +48,11 @@ var ClientUserDayli = db.Schema({
 });
 
 var FollowingWeekReport = db.Schema({
+    stamp: { type: Date, default: Date.now() },
     week: Number,
     year: Number,
     user: user.schema,
-    type: String,    
+    type: String,
     count: Number
 });
 FollowingWeekReport.statics.getWeekStats = (user, cb) => {
@@ -77,9 +80,9 @@ FollowingWeekReport.statics.getWeekStats = (user, cb) => {
             return cb(err);
         }
         if (!reportItem) {
-            return cb(null,null);
+            return cb(null, null);
         }
-        return cb(null,reportItem);
+        return cb(null, reportItem);
     })
 }
 
@@ -104,7 +107,7 @@ FollowingWeekReport.statics.incClient = (user, type, cb) => {
                         week: d.week,
                         year: d.year,
                         type: type,
-                        user:user
+                        user: user
                     });
             }
             reportItem.count = (reportItem.count || 0) + 1;
@@ -131,6 +134,30 @@ ClientUserDayli.statics.incClient = (user, cb) => {
         }
     )
 };
+
+ClientUserDayli.statics.getByRange = params => {
+    return new q((ressove, reject) => {
+        if (!params.range.start || !params.range.end) {
+            return reject(new Error('Не верно задан преиод'));
+        }
+        if (!params.user) {
+            return reject(new Error('Не верно задан пользователь'));
+        }
+        params.model = db.model('user_client_dayli', ClientUserDayli);
+        if (params.user.NameType == 'Консультант') {
+            return resolve(reportUtils.getClientByRangeToConsultant(params));
+        }
+        if (params.user.NameType == 'Рук. Салона') {
+            return resolve(reportUtils.getClientByRangeToHeadSalon(params));
+        }
+        if (params.user.NameType == 'Рук. Салона') {
+            return resolve(reportUtils.getClientByRangeToHeadBranch(params));
+        }
+        if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор') {
+            return resolve(reportUtils.getClientByRangeToMaster(params));
+        }
+    });
+}
 
 ClientUserDayli.statics.getToday = function (user) {
     return new q(function (resolve, reject) {
@@ -173,9 +200,9 @@ ClientUserDayli.statics.getToday = function (user) {
                     if (!reportItem) {
                         return resolve(0);
                     }
-                    if(!reportItem.length){
+                    if (!reportItem.length) {
                         return resolve(0);
-                    }                    
+                    }
                     return resolve(reportItem[0].count || 0);
                 })
             } else {
