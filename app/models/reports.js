@@ -183,7 +183,7 @@ ClientUserDayli.statics.getByRange = params => {
 ClientUserDayli.statics.getToday = function (user) {
     return new q(function (resolve, reject) {
         console.log("update client dayli report");
-        var local_model = db.model('user_client_dayli', ClientUserDayli);
+        var local_model = db.model('user_client_dayli', FollowingWeekReport);
         var current_date = new Date();
         if (user.NameType == 'Консультант') {
             local_model.findOne(
