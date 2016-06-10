@@ -1,0 +1,19 @@
+<div layout="column" flex style="background:url('/app/assets/images/1790360.jpg')">
+    <div layout="row" layout-align="center center" style="min-height:92vh">
+        <div md-whiteframe="1" style="background:rgba(255, 255, 254,0.6);padding:0 20px 20px 20px" layout="column">
+            <h1 class="md-display-1">Представьтесь пожалуйста</h1>
+            <md-input-container>
+                <label>Ваше имя</label>
+                <input ng-model="user.name">
+            </md-input-container>
+            <md-input-container>
+                <label>Пароль</label>
+                <input ng-model="user.password" type="password">
+            </md-input-container>
+            <md-button class="md-primary md-raised md-hue-1" ng-click="login()">
+                Войти
+            </md-button>
+        </div>
+
+    </div>
+</div>

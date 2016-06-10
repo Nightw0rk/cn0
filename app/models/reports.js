@@ -135,6 +135,27 @@ ClientUserDayli.statics.incClient = (user, cb) => {
     )
 };
 
+FollowingWeekReport.statics.getByRange = params => {
+    return new q((ressove, reject) => {
+        if (!params.range.start || !params.range.end) {
+            return reject(new Error('Не верно задан преиод'));
+        }
+        if (!params.user) {
+            return reject(new Error('Не верно задан пользователь'));
+        }
+        params.model = db.model('follow_client_week', ClientUserDayli);        
+        if (params.user.NameType == 'Рук. Салона') {
+            return resolve(reportUtils.getFollowByRangeToHeadSalon(params));
+        }
+        if (params.user.NameType == 'Рук. Салона') {
+            return resolve(reportUtils.getFollowByRangeToHeadBranch(params));
+        }
+        if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор') {
+            return resolve(reportUtils.getFollowByRangeToMaster(params));
+        }
+    });
+}
+
 ClientUserDayli.statics.getByRange = params => {
     return new q((ressove, reject) => {
         if (!params.range.start || !params.range.end) {

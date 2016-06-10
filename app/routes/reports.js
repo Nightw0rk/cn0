@@ -94,11 +94,39 @@ route.get("/default/today/clients", session(), (req, res) => {
 
 route.get("/default/today/follows", session(), (req, res) => {
     reports.followUserWeek.getWeekStats(req.user, (err, result) => {
-        if(err){
+        if (err) {
             return res.send({ status: "ERROR", msg: err });
         }
         return res.send({ status: "OK", follow: result });
     })
+})
+
+route.get('/default/range/clients/:start/:end', session(), (req, res) => {
+    reports.clientUserDayli.getByRange({
+        range: {
+            start: new Date(req.params.start),
+            end: new Date(req.params.end),
+        },
+        user: req.user
+    }).then((data) => {
+        return res.send({ status: "OK", data: data });
+    }).catch((err) => {
+        return res.send({ status: "ERROR", msg: err });
+    });
+});
+
+route.get('/default/range/follow/:start/:end', session(), (req, res) => {
+    reports.followUserWeek.getByRange({
+        range: {
+            start: new Date(req.params.start),
+            end: new Date(req.params.end),
+        },
+        user: req.user
+    }).then((data) => {
+        return res.send({ status: "OK", data: data });
+    }).catch((err) => {
+        return res.send({ status: "ERROR", msg: err });
+    });
 })
 
 module.exports = route;

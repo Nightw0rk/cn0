@@ -1,0 +1,115 @@
+<div ng-cloak  style="background:#fff">
+    <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="Стандартный отчет о поситителе" style="padding:25px;background:#fff" layout="column" layout-align="center">
+            <div style="padding:0 25px 0 25px;background:#fff">
+                <md-content md-theme="docs-dark" layout-gt-sm="row" layout-padding>
+                    <div>
+                        <h3>Общие данные</h3>
+                        <md-input-container>
+                            <label>Фамилия</label>
+                            <input ng-model="report.family">
+                        </md-input-container>
+                        <md-input-container>
+                            <label>Имя</label>
+                            <input ng-model="report.name">
+                        </md-input-container>
+                        <md-input-container>
+                            <label>Отчество</label>
+                            <input ng-model="report.second_name">
+                        </md-input-container>
+                        <md-input-container>
+                            <label>Телефон</label>
+                            <input ng-model="report.phone" type="phone">
+                        </md-input-container>
+                        <md-input-container>
+                            <label>Email</label>
+                            <input ng-model="report.email" type="email">
+                        </md-input-container>
+                    </div>
+                </md-content>
+                <md-content md-theme="docs-dark" layout-gt-sm="row" layout-padding>
+                    <div>
+                        <md-input-container>
+                            <label>Город</label>
+                            <input ng-model="report.city">
+                        </md-input-container>
+                        <md-input-container>
+                            <label>Адрес</label>
+                            <input ng-model="report.address">
+                        </md-input-container>
+                    </div>
+                </md-content>
+                <md-content layout-gt-sm="column" layout-padding>
+                    <div flex>
+                        <h3>Данные заказе</h3>
+                        <md-input-container flex="60">
+                            <label>Узнал о нас из</label>
+                            <input ng-model="report.follow">
+                        </md-input-container>
+                        <md-input-container>
+                            <md-checkbox ng-model="report.first">Первое обращение</md-checkbox>
+                        </md-input-container>
+                    </div>
+                    <div flex>
+                      <md-input-container style="min-width:400px;">
+                          <label>Социальные сети пользователя</label>
+                          <input ng-model="report.social">
+                      </md-input-container>
+                    </div>
+                </md-content>
+                <md-content layout-gt-sm="row" layout-padding>
+                    <md-input-container>
+                        <md-checkbox ng-model="report.consult">Консультация</md-checkbox>
+                    </md-input-container>
+                    <md-input-container>
+                        <md-checkbox ng-model="report.draw">Прорисовка</md-checkbox>
+                    </md-input-container>
+                    <md-input-container>
+                        <md-checkbox ng-model="report.zakaz">Заказ</md-checkbox>
+                    </md-input-container>
+                    <md-input-container>
+                        <md-checkbox ng-model="report.pay">Оплата</md-checkbox>
+                    </md-input-container>
+                    <md-input-container>
+                        <md-checkbox ng-model="report.second_pay">Доплата</md-checkbox>
+                    </md-input-container>
+                    <md-input-container ng-show="report.pay || report.second_pay">
+                        <label>Сумма</label>
+                        <input ng-model="report.payment">
+                    </md-input-container>
+                    <md-input-container ng-show="report.draw ">
+                        <label>Номер прорисовки</label>
+                        <input ng-model="report.orderdraw">
+                    </md-input-container>
+                    <md-input-container ng-show="report.zakaz ">
+                        <label>Номер заказа</label>
+                        <input ng-model="report.orderzakaz">
+                    </md-input-container>
+                </md-content>
+                <md-content layout="column" flex="60">
+                    <md-input-container>
+                        <label>Кухня планируется устанавливаться в</label>
+                        <md-select ng-model="report.houseifo">
+                            <md-option>Вторичный рынок</md-option>
+                            <md-option>Новостройка</md-option>
+                            <md-option>Дом</md-option>
+                        </md-select>
+                    </md-input-container>
+                </md-content>
+                <md-content layout="column" flex="60" ng-show="report.zakaz">
+                    <md-input-container>
+                        <label>Участвует в акциях</label>
+                        <input ng-model="report.offers">
+                    </md-input-container>
+                </md-content>
+                 <md-content layout="column" flex="60">
+                    <md-input-container>
+                        <label>Оценка</label>
+                        <input ng-model="report.mark">
+                    </md-input-container>
+                </md-content>
+            </div>
+            <md-button class="md-primary md-raised" ng-click="save()">Сохранить</md-button>
+        </md-tab>
+    </md-tabs>
+</div>

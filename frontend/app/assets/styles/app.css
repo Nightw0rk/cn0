@@ -1,0 +1,10 @@
+md-grid-tile {
+  transition: all 400ms ease-out 50ms;
+  background:rgba(255,255,255,0.7); 
+  }
+.md-datepicker-input-mask-opaque, md-datepicker {
+  background: transparent;
+}
+.md-datepicker-input-container,.md-datepicker-calendar{
+  background: white;
+}

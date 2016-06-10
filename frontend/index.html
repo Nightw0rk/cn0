@@ -1,0 +1,33 @@
+<!DOCTYPE html >
+<html ng-app="CRM">
+
+<head>
+    <base href="/">
+    <meta charset="utf-8" />
+    <script src="./bower_components/angular/angular.min.js"></script>
+    <script src="./bower_components/angular-material/angular-material.min.js"></script>
+    <script src="./bower_components/angular-animate/angular-animate.min.js"></script>
+    <script src="./bower_components/angular-aria/angular-aria.min.js"></script>
+    <script src="./bower_components/angular-route/angular-route.min.js"></script>
+    <script src="./bower_components/bluebird/js/browser/bluebird.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-google-chart/0.1.0/ng-google-chart.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="./bower_components/angular-material/angular-material.min.css" />
+    <link rel="stylesheet" href="./app/assets/styles/app.css" />
+    <script src="./app/app.js"></script>
+    <script src="./app/services/user.js"></script>
+    <script src="./app/services/report.js"></script>
+</head>
+
+<body ng-controller="DefaultCtrl" layout="column">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <md-button ng-show="notPrimary" ng-click="back()">&lt;</md-button>
+            <h2>
+              <span><img src="./app/assets/images/logo.png" height="50"/></span>
+            </h2>
+        </div>
+    </md-toolbar>
+    <md-content layout="column" flex ng-view style="background:url('/app/assets/images/1790360.jpg')"></md-content>
+</body>
+
+</html>

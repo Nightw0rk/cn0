@@ -1,0 +1,23 @@
+{
+  "name": "frontend",
+  "authors": [
+    "Пронин Антон <pronin@lorena-kuhni.ru>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.5.6",
+    "angular-material": "^1.0.9",
+    "angular-route": "^1.5.6",
+    "bluebird": "^3.4.0"
+  }
+}
