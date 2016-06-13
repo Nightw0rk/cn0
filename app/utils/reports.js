@@ -4,7 +4,7 @@ module.exports = {
         return new q((resolve, reject) => {
             params.model.find({
                 "stamp": { "$gte": params.range.start, "$lte": params.range.end },
-                "user._id": params.user._id
+                "user.Id": params.user.Id
             }, (err, result) => {
                 if (err) {
                     return reject(err);

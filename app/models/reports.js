@@ -94,7 +94,7 @@ FollowingWeekReport.statics.incClient = (user, type, cb) => {
         {
             week: d.week,
             year: d.year,
-            'user._id': user._id,
+            'user.Id': user.Id,
             type: type
         },
         (err, reportItem) => {
@@ -121,7 +121,7 @@ ClientUserDayli.statics.incClient = (user, cb) => {
     console.log("update client dayli report");
     var local_model = db.model('user_client_dayli', ClientUserDayli);
     local_model.findOne(
-        { day: current_date.getDate(), month: current_date.getMonth() + 1, year: current_date.getFullYear(), "user._id": user._id },
+        { day: current_date.getDate(), month: current_date.getMonth() + 1, year: current_date.getFullYear(), "user.Id": user.Id },
         (err, reportItem) => {
             if (err) {
                 console.log("Ошибка сохранения дневного отчета", err);
@@ -187,7 +187,7 @@ ClientUserDayli.statics.getToday = function (user) {
         var current_date = new Date();
         if (user.NameType == 'Консультант') {
             local_model.findOne(
-                { day: current_date.getDate(), month: current_date.getMonth() + 1, year: current_date.getFullYear(), "user._id": user._id },
+                { day: current_date.getDate(), month: current_date.getMonth() + 1, year: current_date.getFullYear(), "user.Id": user.Id },
                 (err, reportItem) => {
                     if (err) {
                         return reject(err);

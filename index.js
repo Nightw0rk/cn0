@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(cors())
 
-dns.resolve4(process.env.MONGO_HOST||'127.0.0.1',function(err,address){
+dns.resolve4(process.env.MONGO_HOST||'192.168.0.176',function(err,address){
   if(address){
     config.db.connection_string = "mongodb://"+address.join()+"/crm"+(process.env.MONGO_REPLICA||'')
   }
