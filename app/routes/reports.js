@@ -8,8 +8,13 @@ route.post("/add", session(), (req, res) => {
     var data = req.body;
     data.author = req.user
     var seqArray = [
-        (callback) => { return reports.clientUserDayli.incClient(req.user, callback) },
-        (callback) => { return reports.followUserWeek.incClient(req.user, data.follow, callback) }
+        (callback) => { return reports.clientUserDayli.incClient(req.user, data.salon, callback) },
+        (callback) => { return reports.followUserWeek.incClient(req.user, data.follow, data.salon, callback) },
+        (callback) => { return reports.DrawUserDayli.incClient(req.user, data.draw, data.salon, callback) },
+        (callback) => { return reports.ZakazUserDayli.incClient(req.user, data.zakaz, data.salon, callback) },
+        (callback) => { return reports.ConsultUserDayli.incClient(req.user, data.consult, data.salon, callback) },
+        (callback) => { return reports.PayUserDayli.incClient(req.user, data.cost_pay, data.salon, callback) },
+        (callback) => { return reports.SecondPayUserDayli.incClient(req.user, data.cost_second_pay, data.salon, callback) },
     ];
     delete data.author.session;
     var item = new reports.default(data);
@@ -85,7 +90,7 @@ route.delete("/{id}", session, (req, res) => {
 route.get("/default/today/clients", session(), (req, res) => {
     reports.clientUserDayli.getToday(req.user)
         .then((data) => {
-            return res.send({ status: "OK", data: data });
+            return res.send({ status: "OK", data: data.count });
         })
         .catch((err) => {
             return res.send({ status: "ERROR", msg: err });
@@ -93,23 +98,91 @@ route.get("/default/today/clients", session(), (req, res) => {
 })
 
 route.get("/default/today/follows", session(), (req, res) => {
-    reports.followUserWeek.getWeekStats(req.user, (err, result) => {
-        if (err) {
+    reports.followUserWeek.getWeekStats(req.user)
+        .then((data) => {
+            return res.send({ status: "OK", follow: data });
+        }).catch((err) => {
             return res.send({ status: "ERROR", msg: err });
-        }
-        return res.send({ status: "OK", follow: result });
-    })
+        });
 })
-
+route.get("/default/range/follows/:start/:end", session(), (req, res) => {
+    reports.followUserWeek.getByRange({
+        range: {
+            start: new Date(Number(req.params.start)),
+            end: new Date(Number(req.params.end)),
+        },
+        user: req.user
+    })
+        .then((data) => {
+            return res.send({ status: "OK", follow: data });
+        }).catch((err) => {
+            return res.send({ status: "ERROR", msg: err });
+        });
+})
 route.get('/default/range/clients/:start/:end', session(), (req, res) => {
     reports.clientUserDayli.getByRange({
         range: {
-            start: new Date(req.params.start),
-            end: new Date(req.params.end),
+            start: new Date(Number(req.params.start)),
+            end: new Date(Number(req.params.end)),
         },
         user: req.user
     }).then((data) => {
         return res.send({ status: "OK", data: data });
+    }).catch((err) => {
+        return res.send({ status: "ERROR", msg: err });
+    });
+});
+
+route.get('/default/range/draw/:start/:end', session(), (req, res) => {
+    reports.DrawUserDayli.getByRange({
+        range: {
+            start: new Date(Number(req.params.start)),
+            end: new Date(Number(req.params.end)),
+        },
+        user: req.user
+    }).then((data) => {
+        return res.send({ status: "OK", data: data.count });
+    }).catch((err) => {
+        return res.send({ status: "ERROR", msg: err });
+    });
+});
+
+route.get('/default/range/zakaz/:start/:end', session(), (req, res) => {
+    reports.ZakazUserDayli.getByRange({
+        range: {
+            start: new Date(Number(req.params.start)),
+            end: new Date(Number(req.params.end)),
+        },
+        user: req.user
+    }).then((data) => {
+        return res.send({ status: "OK", data: data.count });
+    }).catch((err) => {
+        return res.send({ status: "ERROR", msg: err });
+    });
+});
+route.get('/default/range/pay/:start/:end', session(), (req, res) => {
+    reports.PayUserDayli.getByRange({
+        range: {
+            start: new Date(Number(req.params.start)),
+            end: new Date(Number(req.params.end)),
+        },
+        user: req.user
+    }).then((data) => {
+        return res.send({ status: "OK", data: data.cost });
+    }).catch((err) => {
+        return res.send({ status: "ERROR", msg: err });
+    });
+});
+
+route.get('/default/range/secondpay/:start/:end', session(), (req, res) => {
+    reports.SecondPayUserDayli.getByRange({
+        range: {
+            start: new Date(Number(req.params.start)),
+            end: new Date(Number(req.params.end)),
+        },
+        user: req.user
+    }).then((data) => {
+        return res.send({ status: "OK", data: data.cost });
     }).catch((err) => {
         return res.send({ status: "ERROR", msg: err });
     });

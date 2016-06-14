@@ -1,7 +1,18 @@
-<div ng-cloak  style="background:#fff">
+<div ng-cloak style="background:#fff">
     <md-tabs md-dynamic-height md-border-bottom>
         <md-tab label="Стандартный отчет о поситителе" style="padding:25px;background:#fff" layout="column" layout-align="center">
             <div style="padding:0 25px 0 25px;background:#fff">
+                <md-content md-theme="docs-dark" layout-gt-sm="row" layout-padding>
+                    <div>
+                        <h3>Место обращения</h3>
+                        <md-input-container>
+                            <label>Салон</label>
+                            <md-select ng-model="report.salon">
+                                <md-option ng-repeat="item in salons">{{item}}</md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                </md-content>
                 <md-content md-theme="docs-dark" layout-gt-sm="row" layout-padding>
                     <div>
                         <h3>Общие данные</h3>
@@ -51,10 +62,10 @@
                         </md-input-container>
                     </div>
                     <div flex>
-                      <md-input-container style="min-width:400px;">
-                          <label>Социальные сети пользователя</label>
-                          <input ng-model="report.social">
-                      </md-input-container>
+                        <md-input-container style="min-width:400px;">
+                            <label>Социальные сети пользователя</label>
+                            <input ng-model="report.social">
+                        </md-input-container>
                     </div>
                 </md-content>
                 <md-content layout-gt-sm="row" layout-padding>
@@ -73,9 +84,13 @@
                     <md-input-container>
                         <md-checkbox ng-model="report.second_pay">Доплата</md-checkbox>
                     </md-input-container>
-                    <md-input-container ng-show="report.pay || report.second_pay">
-                        <label>Сумма</label>
-                        <input ng-model="report.payment">
+                    <md-input-container ng-show="report.pay">
+                        <label>Сумма предоплаты</label>
+                        <input ng-model="report.cost_pay">
+                    </md-input-container>
+                    <md-input-container ng-show="report.second_pay">
+                        <label>Сумма оплаты</label>
+                        <input ng-model="report.cost_second_pay">
                     </md-input-container>
                     <md-input-container ng-show="report.draw ">
                         <label>Номер прорисовки</label>
@@ -102,7 +117,7 @@
                         <input ng-model="report.offers">
                     </md-input-container>
                 </md-content>
-                 <md-content layout="column" flex="60">
+                <md-content layout="column" flex="60">
                     <md-input-container>
                         <label>Оценка</label>
                         <input ng-model="report.mark">

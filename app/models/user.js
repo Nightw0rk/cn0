@@ -9,14 +9,17 @@ var deportament  = db.Schema({
   HeadId:Number,
   IsTrgPoint:Boolean
 })
-
+var conntactionFaceZakaz = db.Schema({
+    NameOrg:String
+})
 var sotrud = db.Schema({
     Id:Number,
     Family:String,
     SecondName:String,
     Name:String,
     Profession:String,
-    Deportament:deportament
+    Deportament:deportament,
+    ConntactionFaceZakaz:conntactionFaceZakaz
 })
 
 var user = db.Schema({

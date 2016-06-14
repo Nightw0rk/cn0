@@ -9,7 +9,14 @@ var route = express.Router();
 route.post("/login", function (req, res) {
     user.createNewSession(req.body.name, req.body.password)
         .then(function (user) {
-            res.send({ status: "OK", msg: "Авторизация успешна", result: { session: user.session, type: user.NameType } });
+            res.send({
+                status: "OK", msg: "Авторизация успешна",
+                result: {
+                    session: user.session,
+                    type: user.NameType,
+                    salons: user.Sotrud.ConntactionFaceZakaz
+                }
+            });
         })
         .catch(function (err, v, d) {
             res.send(err);

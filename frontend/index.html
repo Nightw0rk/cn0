@@ -20,11 +20,13 @@
 
 <body ng-controller="DefaultCtrl" layout="column">
     <md-toolbar>
-        <div class="md-toolbar-tools">
+        <div class="md-toolbar-tools">        
             <md-button ng-show="notPrimary" ng-click="back()">&lt;</md-button>
             <h2>
-              <span><img src="./app/assets/images/logo.png" height="50"/></span>
+                <span><img src="./app/assets/images/logo.png" height="50"/></span>
             </h2>
+            <span flex></span>            
+            <md-button class="md-raised" ng-show="user!=''" ng-click="exit()" >Выйти</md-button>            
         </div>
     </md-toolbar>
     <md-content layout="column" flex ng-view style="background:url('/app/assets/images/1790360.jpg')"></md-content>

@@ -1,7 +1,12 @@
+"use strict";
+var options = {};
+options.msInDay = 86400000;
+options.api = {};
+options.api.base_url = "http://localhost:2080";
 var app = angular.module('CRM', ['ngMaterial', 'ngRoute', 'googlechart']);
-app.config(function($routeProvider, $locationProvider, $mdThemingProvider,$mdIconProvider) {
+app.config(function ($routeProvider, $locationProvider, $mdThemingProvider, $mdIconProvider) {
     $mdIconProvider
-      .defaultIconSet('app/assets/images/core-icons.svg', 24);
+        .defaultIconSet('app/assets/images/core-icons.svg', 24);
     $mdThemingProvider.theme('docs-dark', 'default')
         .primaryPalette('blue')
         .dark();
@@ -12,10 +17,26 @@ app.config(function($routeProvider, $locationProvider, $mdThemingProvider,$mdIco
         .when("/", {
             controller: 'AppCtrl',
             templateUrl: 'app/views/main.html',
-            resolve:{
-              clients:function(ReportService) {
-                return ReportService.getClientsToDay();
-              }
+            resolve: {
+                clients: function (ReportService) {
+                    return ReportService.getClientsToDay();
+                },
+                draw: function (ReportService) {
+                    var d = new Date();
+                    return ReportService.getDrawRange(d - options.msInDay, d - 1);
+                },
+                zakaz: function (ReportService) {
+                    var d = new Date();
+                    return ReportService.getZakazRange(d - options.msInDay, d - 1);
+                },
+                pay: function (ReportService) {
+                    var d = new Date();
+                    return ReportService.getPayRange(d - options.msInDay, d - 1);
+                },
+                secondPay: function (ReportService) {
+                    var d = new Date();
+                    return ReportService.getSecondPayRange(d - options.msInDay, d - 1);
+                }
             }
         })
         .when("/app", {
@@ -35,62 +56,107 @@ app.config(function($routeProvider, $locationProvider, $mdThemingProvider,$mdIco
         })
     //$locationProvider.html5Mode(true);
 })
-app.run(function($rootScope, AuthService, $location) {
-    $rootScope.back = function() {
+app.run(function ($rootScope, AuthService, $location, Session) {
+    Session.load();
+    $rootScope.back = function () {
         window.history.back();
     }
-    $rootScope.$on('$locationChnageStart', function(event, next) {
+    $rootScope.$on('$locationChnageStart', function (event, next) {
         $rootScope.notPrimary = false;
         /*if (!AuthService.isAuthenticated()) {
             $location.path("/login")
         }*/
     })
 })
-app.controller('AppCtrl', function($rootScope, $scope, $location,Session, AuthService,clients,ReportService) {
+app.controller('AppCtrl', function ($rootScope, $scope, $location, Session, AuthService,
+    draw, zakaz, pay, secondPay,
+    clients, ReportService) {
 
     $rootScope.notPrimary = false;
     $scope.start = new Date();
     $scope.end = new Date();
-    $scope.FollowChart={};
+    $scope.FollowChart = {};
     if (!AuthService.isAuthenticated()) {
         $location.path("/login")
     }
     $scope.countClient = clients;
+    $scope.countDraw = draw;
+    $scope.countZakaz = zakaz;
+    $scope.sumPay = pay;
+    $scope.sumSecondPay = secondPay;
     $scope.user = Session.data;
-    if($scope.user.type!='Консультант'){
-      ReportService.getFollowWeek().then(result=>{
-        $scope.fc = {};
-        $scope.fc.rows=[];
-        $scope.fc.cols=[
-          {id:"t",label:"Topping",type:"string"},
-          {id:"s",label:"Клиентов",type:"number"}
-        ];
-        result.map(item=>{
-          $scope.fc.rows.push({c:[{v:item._id.type},{v:item.count}]});
-        })
-        $scope.FollowChart.data ={
-          "cols":$scope.fc.cols,
-          "rows":$scope.fc.rows
-        };
-        $scope.FollowChart.type='BarChart';
-      },console.log)
+    if ($scope.user.type != 'Консультант') {
+        ReportService.getFollowWeek().then(result => {
+            $scope.fc = {};
+            $scope.fc.rows = [];
+            $scope.fc.cols = [
+                { id: "t", label: "Topping", type: "string" },
+                { id: "s", label: "Клиентов", type: "number" }
+            ];
+            result.result.map(item => {
+                $scope.fc.rows.push({ c: [{ v: item._id.type }, { v: item.count }] });
+            })
+            $scope.FollowChart.data = {
+                "cols": $scope.fc.cols,
+                "rows": $scope.fc.rows
+            };
+            $scope.FollowChart.type = 'BarChart';
+        }, console.log)
+    }
+    $scope.update = function () {
+        ReportService.getClientsRange($scope.start.getTime(), $scope.end.getTime()).then(function (data) { $scope.countClient = data.count })
+        ReportService.getDrawRange($scope.start.getTime(), $scope.end.getTime()).then(function (data) { $scope.countDraw = data })
+        ReportService.getPayRange($scope.start.getTime(), $scope.end.getTime()).then(function (data) { $scope.sumPay = data })
+        ReportService.getSecondPayRange($scope.start.getTime(), $scope.end.getTime()).then(function (data) { $scope.sumSecondPay = data })
+        ReportService.getZakazRange($scope.start.getTime(), $scope.end.getTime()).then(function (data) { $scope.countZakaz = data })
+        if ($scope.user.type != 'Консультант') {
+            ReportService.getFollowRange($scope.start.getTime(), $scope.end.getTime()).then(result => {
+                $scope.fc = {};
+                $scope.fc.rows = [];
+                $scope.fc.cols = [
+                    { id: "t", label: "Topping", type: "string" },
+                    { id: "s", label: "Клиентов", type: "number" }
+                ];
+                result.result.map(item => {
+                    $scope.fc.rows.push({ c: [{ v: item._id.type }, { v: item.count }] });
+                })
+                $scope.FollowChart.data = {
+                    "cols": $scope.fc.cols,
+                    "rows": $scope.fc.rows
+                };
+                $scope.FollowChart.type = 'BarChart';
+            }, console.log)
+        }
     }
 
 });
-app.controller('DefaultCtrl', function($rootScope, $scope, $location, AuthService) {
-
+app.controller('DefaultCtrl', function ($rootScope, $scope, $location, Session, AuthService) {
+    $scope.user = Session.data;
     $rootScope.notPrimary = false;
     if (!AuthService.isAuthenticated()) {
         $location.path("/login")
     }
+    $scope.exit = function () {
+        Session.data = undefined;
+        localStorage.setItem('session', undefined);
+        $location.path("/login")
+    }
 
 });
-app.controller('ReportCtrl', function($rootScope, $scope, $location, ReportService, $mdToast,AuthService) {
-     if (!AuthService.isAuthenticated()) {
-         $location.path("/login")
-     }
+app.controller('ReportCtrl', function ($rootScope, $scope, $location, Session, ReportService, $mdToast, AuthService) {
+    if (!AuthService.isAuthenticated()) {
+        $location.path("/login")
+    }
+    $scope.report = {};
+    $scope.salons = []
+    for (var item in Session.data.salons) {
+        if (!isNaN(Number(item))) {
+            $scope.salons.push(Session.data.salons[item].NameOrg);
+        }
+    }
+    $scope.report.salon = $scope.salons[0];
     $rootScope.notPrimary = true;
-    $scope.save = function() {
+    $scope.save = function () {
         ReportService.save($scope.report)
             .then(() => {
                 $location.path("/");
@@ -104,11 +170,11 @@ app.controller('ReportCtrl', function($rootScope, $scope, $location, ReportServi
     }
 });
 
-app.controller('LoginCtrl', function($scope, $location, AuthService, $mdToast) {
-    $scope.login = function() {
+app.controller('LoginCtrl', function ($scope, $location, AuthService, $mdToast) {
+    $scope.login = function () {
         AuthService.login($scope.user)
             .then(() => {
-               $location.path("/")
+                $location.path("/")
             }, (err) => {
                 console.log(err);
                 var toast = $mdToast.simple()
