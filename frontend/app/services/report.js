@@ -15,7 +15,7 @@ app.factory("ReportService", function ($http, Session, $q) {
             var d = $q.defer();
             if (!Session.data) return d.reject("Не авторизван");
             $http.get(options.api.base_url + "/reports/default/today/clients?session=" + Session.data.session).then((body) => {
-                d.resolve(body.data.data);
+                d.resolve(body.data);
             }, (err) => {
                 d.reject(err);
             })

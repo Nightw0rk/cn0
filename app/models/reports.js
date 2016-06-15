@@ -292,10 +292,10 @@ FollowingWeekReport.statics.getByRange = params => {
             return resolve(reportUtils.getByRangeToHeadSalon(params));
         }
         if (params.user.NameType == 'Рук. Филиала') {
-            return resolve(reportUtils.getFollowByRangeToHeadBranch(params));
+            return resolve(reportUtils.getByRangeToHeadBranch(params));
         }
         if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор') {
-            return resolve(reportUtils.getFollowByRangeToMaster(params));
+            return resolve(reportUtils.getByRangeToMaster(params));
         }
         if (params.user.NameType == 'Консультант') {
             reject('Ошибка доступа')
@@ -319,10 +319,10 @@ ClientUserDayli.statics.getByRange = params => {
             return resolve(reportUtils.getByRangeToHeadSalon(params));
         }
         if (params.user.NameType == 'Рук. Филиала') {
-            return resolve(reportUtils.getClientByRangeToHeadBranch(params));
+            return resolve(reportUtils.getByRangeToHeadBranch(params));
         }
         if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор') {
-            return resolve(reportUtils.getClientByRangeToMaster(params));
+            return resolve(reportUtils.getByRangeToMaster(params));
         }
     });
 }
@@ -371,7 +371,7 @@ ZakazUserDayli.statics.getByRange = function (params) {
             return resolve(reportUtils.getByRangeToHeadBranch(params));
         }
         if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор') {
-            return resolve(reportUtils.getScetchByRangeToMaster(params));
+            return resolve(reportUtils.getByRangeToMaster(params));
         }
 
     });
@@ -395,7 +395,7 @@ PayUserDayli.statics.getByRange = function (params) {
             return resolve(reportUtils.getByRangeCostToHeadBranch(params));
         }
         if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор') {
-            return resolve(reportUtils.getScetchByRangeToMaster(params));
+            return resolve(reportUtils.getByRangeCostToMaster(params));
         }
     });
 };
@@ -416,10 +416,10 @@ SecondPayUserDayli.statics.getByRange = function (params) {
             return resolve(reportUtils.getByRangeCostToHeadSalon(params));
         }
         if (params.user.NameType == 'Рук. Филиала') {
-            return resolve(reportUtils.getScetchByRangeToHeadBranch(params));
+            return resolve(reportUtils.getByRangeCostToHeadBranch(params));
         }
         if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор') {
-            return resolve(reportUtils.getScetchByRangeToMaster(params));
+            return resolve(reportUtils.getByRangeCostToMaster(params));
         }
 
     });
@@ -436,19 +436,7 @@ ClientUserDayli.statics.getToday = function (user) {
         params.model = local_model;
         params.user = user;
         params.range = { start: start_date, end: current_date }
-        return resolve(local_model.getByRange(params));
-        /*if (params.user.NameType == 'Консультант') {
-            return resolve(reportUtils.getClientByRangeToConsultant(params));
-        }
-        if (params.user.NameType == 'Рук. Салона') {
-            return resolve(reportUtils.getClientByRangeToHeadSalon(params));
-        }
-        if (params.user.NameType == 'Рук. Филиала') {
-            return resolve(reportUtils.getClientByRangeToHeadBranch(params));
-        }
-        if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор') {
-            return resolve(reportUtils.getClientByRangeToMaster(params));
-        }*/
+        return resolve(local_model.getByRange(params));      
     });
 }
 

@@ -76,10 +76,27 @@ app.controller('AppCtrl', function ($rootScope, $scope, $location, Session, Auth
     $scope.start = new Date();
     $scope.end = new Date();
     $scope.FollowChart = {};
+    $scope.ReportChart = {};
     if (!AuthService.isAuthenticated()) {
         $location.path("/login")
     }
-    $scope.countClient = clients;
+    $scope.countClient = clients.data;
+    if($scope.user.type != 'Консультант'){
+        $scope._oc = {};
+            $scope._oc.rows = [];
+            $scope._oc.cols = [
+                { id: "t", label: "Topping", type: "string" },
+                { id: "s", label: "Отчеты", type: "number" }
+            ];
+             clients.items.map(item => {
+                $scope._oc.rows.push({ c: [{ v: item._id.group+'('+item._id.day+'.'+item._id.month+')' }, { v: item.count }] });
+            })
+            $scope.ReportChart.data = {
+                "cols": $scope._oc.cols,
+                "rows": $scope._oc.rows
+            };
+            $scope.ReportChart.type = 'BarChart';
+    }
     $scope.countDraw = draw;
     $scope.countZakaz = zakaz;
     $scope.sumPay = pay;
@@ -115,7 +132,7 @@ app.controller('AppCtrl', function ($rootScope, $scope, $location, Session, Auth
                 $scope.fc.rows = [];
                 $scope.fc.cols = [
                     { id: "t", label: "Topping", type: "string" },
-                    { id: "s", label: "Клиентов", type: "number" }
+                    { id: "s", label: "Клиенты", type: "number" }
                 ];
                 result.result.map(item => {
                     $scope.fc.rows.push({ c: [{ v: item._id.type }, { v: item.count }] });
@@ -157,6 +174,22 @@ app.controller('ReportCtrl', function ($rootScope, $scope, $location, Session, R
     $scope.report.salon = $scope.salons[0];
     $rootScope.notPrimary = true;
     $scope.save = function () {
+        if(!$scope.report.follow){
+            var toast = $mdToast.simple()
+                    .textContent("Поле \"Узнали о нас из\" обязательно для заполнения!")
+                    .action('OK')
+                    .highlightAction(false);
+                $mdToast.show(toast);                
+                return;
+        }
+        if(!$scope.report.houseifo){
+            var toast = $mdToast.simple()
+                    .textContent("Поле \"Кухня планируется устанавливаться в\" обязательно для заполнения!")
+                    .action('OK')
+                    .highlightAction(false);
+                $mdToast.show(toast);
+                return;
+        }
         ReportService.save($scope.report)
             .then(() => {
                 $location.path("/");

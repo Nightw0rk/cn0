@@ -18,6 +18,7 @@ route.post("/add", session(), (req, res) => {
     ];
     delete data.author.session;
     var item = new reports.default(data);
+    item.stamp = new Date();
     item.save((err) => {
         if (err) {
             return res.send({ status: "ERROR", msg: err });
@@ -90,7 +91,7 @@ route.delete("/{id}", session, (req, res) => {
 route.get("/default/today/clients", session(), (req, res) => {
     reports.clientUserDayli.getToday(req.user)
         .then((data) => {
-            return res.send({ status: "OK", data: data.count });
+            return res.send({ status: "OK", data: data.count, items: data.result });
         })
         .catch((err) => {
             return res.send({ status: "ERROR", msg: err });
@@ -127,7 +128,7 @@ route.get('/default/range/clients/:start/:end', session(), (req, res) => {
         },
         user: req.user
     }).then((data) => {
-        return res.send({ status: "OK", data: data });
+        return res.send({ status: "OK", data: data, });
     }).catch((err) => {
         return res.send({ status: "ERROR", msg: err });
     });

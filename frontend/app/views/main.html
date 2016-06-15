@@ -10,19 +10,19 @@
         <md-grid-tile class="gray" md-whiteframe="2">
             <h1 class="md-display-3">{{countClient}}</h1>
             <md-grid-tile-footer>
-                <h3>Клиентов сегодня</h3>
+                <h3>Клиентов</h3>
             </md-grid-tile-footer>
         </md-grid-tile>
         <md-grid-tile class="green" md-whiteframe="2">
             <h1 class="md-display-3">{{countDraw}}</h1>
             <md-grid-tile-footer>
-                <h3>Прорисовок сегодня</h3>
+                <h3>Прорисовок</h3>
             </md-grid-tile-footer>
         </md-grid-tile>
         <md-grid-tile class="yellow" md-whiteframe="2">
             <h1 class="md-display-3">{{countZakaz}}</h1>
             <md-grid-tile-footer>
-                <h3>Заказов сегодня</h3>
+                <h3>Заказов</h3>
             </md-grid-tile-footer>
         </md-grid-tile>
         <md-grid-tile class="blue" md-whiteframe="2">
@@ -42,6 +42,13 @@
             <div google-chart chart="FollowChart" style="height:auto; width:100%;"></div>
             <md-grid-tile-footer>
                 <h3>Источники</h3>
+            </md-grid-tile-footer>
+        </md-grid-tile>
+        <md-grid-tile ng-show="user.type!='Консультант'" class="blue" md-rowspan="2" md-colspan="3" md-colspan-sm="1" md-colspan-xs="1"
+            md-whiteframe="2">
+            <div google-chart chart="ReportChart" style="height:auto; width:100%;"></div>
+            <md-grid-tile-footer>
+                <h3></h3>
             </md-grid-tile-footer>
         </md-grid-tile>
     </md-grid-list>

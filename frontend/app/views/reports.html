@@ -55,7 +55,7 @@
                         <h3>Данные заказе</h3>
                         <md-input-container flex="60">
                             <label>Узнал о нас из</label>
-                            <input ng-model="report.follow">
+                            <input ng-model="report.follow" required id="follow" >
                         </md-input-container>
                         <md-input-container>
                             <md-checkbox ng-model="report.first">Первое обращение</md-checkbox>
@@ -104,7 +104,7 @@
                 <md-content layout="column" flex="60">
                     <md-input-container>
                         <label>Кухня планируется устанавливаться в</label>
-                        <md-select ng-model="report.houseifo">
+                        <md-select ng-model="report.houseifo" required>
                             <md-option>Вторичный рынок</md-option>
                             <md-option>Новостройка</md-option>
                             <md-option>Дом</md-option>
@@ -119,7 +119,7 @@
                 </md-content>
                 <md-content layout="column" flex="60">
                     <md-input-container>
-                        <label>Оценка</label>
+                        <label>Оценка руководителя</label>
                         <input ng-model="report.mark">
                     </md-input-container>
                 </md-content>
