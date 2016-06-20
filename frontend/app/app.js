@@ -81,21 +81,23 @@ app.controller('AppCtrl', function ($rootScope, $scope, $location, Session, Auth
         $location.path("/login")
     }
     $scope.countClient = clients.data;
-    if($scope.user.type != 'Консультант'){
+    if ($scope.user.type != 'Консультант') {
         $scope._oc = {};
-            $scope._oc.rows = [];
-            $scope._oc.cols = [
-                { id: "t", label: "Topping", type: "string" },
-                { id: "s", label: "Отчеты", type: "number" }
-            ];
-             clients.items.map(item => {
-                $scope._oc.rows.push({ c: [{ v: item._id.group+'('+item._id.day+'.'+item._id.month+')' }, { v: item.count }] });
+        $scope._oc.rows = [];
+        $scope._oc.cols = [
+            { id: "t", label: "Topping", type: "string" },
+            { id: "s", label: "Отчеты", type: "number" }
+        ];
+        if (clients.items) {
+            clients.items.map(item => {
+                $scope._oc.rows.push({ c: [{ v: item._id.group + '(' + item._id.day + '.' + item._id.month + ')' }, { v: item.count }] });
             })
             $scope.ReportChart.data = {
                 "cols": $scope._oc.cols,
                 "rows": $scope._oc.rows
             };
             $scope.ReportChart.type = 'BarChart';
+        }
     }
     $scope.countDraw = draw;
     $scope.countZakaz = zakaz;
@@ -110,14 +112,16 @@ app.controller('AppCtrl', function ($rootScope, $scope, $location, Session, Auth
                 { id: "t", label: "Topping", type: "string" },
                 { id: "s", label: "Клиентов", type: "number" }
             ];
-            result.result.map(item => {
-                $scope.fc.rows.push({ c: [{ v: item._id.type }, { v: item.count }] });
-            })
-            $scope.FollowChart.data = {
-                "cols": $scope.fc.cols,
-                "rows": $scope.fc.rows
-            };
-            $scope.FollowChart.type = 'BarChart';
+            if (result.result) {
+                result.result.map(item => {
+                    $scope.fc.rows.push({ c: [{ v: item._id.type }, { v: item.count }] });
+                })
+                $scope.FollowChart.data = {
+                    "cols": $scope.fc.cols,
+                    "rows": $scope.fc.rows
+                };
+                $scope.FollowChart.type = 'BarChart';
+            }
         }, console.log)
     }
     $scope.update = function () {
@@ -134,14 +138,16 @@ app.controller('AppCtrl', function ($rootScope, $scope, $location, Session, Auth
                     { id: "t", label: "Topping", type: "string" },
                     { id: "s", label: "Клиенты", type: "number" }
                 ];
-                result.result.map(item => {
-                    $scope.fc.rows.push({ c: [{ v: item._id.type }, { v: item.count }] });
-                })
-                $scope.FollowChart.data = {
-                    "cols": $scope.fc.cols,
-                    "rows": $scope.fc.rows
-                };
-                $scope.FollowChart.type = 'BarChart';
+                if (result.result) {
+                    result.result.map(item => {
+                        $scope.fc.rows.push({ c: [{ v: item._id.type }, { v: item.count }] });
+                    })
+                    $scope.FollowChart.data = {
+                        "cols": $scope.fc.cols,
+                        "rows": $scope.fc.rows
+                    };
+                    $scope.FollowChart.type = 'BarChart';
+                }
             }, console.log)
         }
     }
@@ -174,21 +180,21 @@ app.controller('ReportCtrl', function ($rootScope, $scope, $location, Session, R
     $scope.report.salon = $scope.salons[0];
     $rootScope.notPrimary = true;
     $scope.save = function () {
-        if(!$scope.report.follow){
+        if (!$scope.report.follow) {
             var toast = $mdToast.simple()
-                    .textContent("Поле \"Узнали о нас из\" обязательно для заполнения!")
-                    .action('OK')
-                    .highlightAction(false);
-                $mdToast.show(toast);                
-                return;
+                .textContent("Поле \"Узнали о нас из\" обязательно для заполнения!")
+                .action('OK')
+                .highlightAction(false);
+            $mdToast.show(toast);
+            return;
         }
-        if(!$scope.report.houseifo){
+        if (!$scope.report.houseifo) {
             var toast = $mdToast.simple()
-                    .textContent("Поле \"Кухня планируется устанавливаться в\" обязательно для заполнения!")
-                    .action('OK')
-                    .highlightAction(false);
-                $mdToast.show(toast);
-                return;
+                .textContent("Поле \"Кухня планируется устанавливаться в\" обязательно для заполнения!")
+                .action('OK')
+                .highlightAction(false);
+            $mdToast.show(toast);
+            return;
         }
         ReportService.save($scope.report)
             .then(() => {
