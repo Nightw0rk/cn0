@@ -105,7 +105,9 @@ var defaultReport = db.Schema({
     mark: String,
     offers: String
 });
-
+var salonModel = db.Schema({
+    name: String
+})
 var ClientUserDayli = db.Schema({
     stamp: { type: Date, default: Date.now() },
     salon: String,
@@ -294,7 +296,8 @@ FollowingWeekReport.statics.getByRange = params => {
         if (params.user.NameType == 'Рук. Филиала') {
             return resolve(reportUtils.getByRangeToHeadBranch(params));
         }
-        if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор') {
+        if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор' ||
+            params.user.NameType == 'ПЭО') {
             return resolve(reportUtils.getByRangeToMaster(params));
         }
         if (params.user.NameType == 'Консультант') {
@@ -321,9 +324,11 @@ ClientUserDayli.statics.getByRange = params => {
         if (params.user.NameType == 'Рук. Филиала') {
             return resolve(reportUtils.getByRangeToHeadBranch(params));
         }
-        if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор') {
+        if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор' ||
+            params.user.NameType == 'ПЭО') {
             return resolve(reportUtils.getByRangeToMaster(params));
         }
+        return resolve({ cost: 0, result: 0 });
     });
 }
 
@@ -345,9 +350,11 @@ DrawUserDayli.statics.getByRange = function (params) {
         if (params.user.NameType == 'Рук. Филиала') {
             return resolve(reportUtils.getByRangeToHeadBranch(params));
         }
-        if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор') {
+        if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор' ||
+            params.user.NameType == 'ПЭО') {
             return resolve(reportUtils.getByRangeToMaster(params));
         }
+        return resolve({ cost: 0, result: 0 });
 
     });
 }
@@ -370,9 +377,11 @@ ZakazUserDayli.statics.getByRange = function (params) {
         if (params.user.NameType == 'Рук. Филиала') {
             return resolve(reportUtils.getByRangeToHeadBranch(params));
         }
-        if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор') {
+        if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор' ||
+            params.user.NameType == 'ПЭО') {
             return resolve(reportUtils.getByRangeToMaster(params));
         }
+        return resolve({ cost: 0, result: 0 });
 
     });
 };
@@ -394,9 +403,11 @@ PayUserDayli.statics.getByRange = function (params) {
         if (params.user.NameType == 'Рук. Филиала') {
             return resolve(reportUtils.getByRangeCostToHeadBranch(params));
         }
-        if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор') {
+        if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор' ||
+            params.user.NameType == 'ПЭО') {
             return resolve(reportUtils.getByRangeCostToMaster(params));
         }
+        return resolve({ cost: 0, result: 0 });
     });
 };
 
@@ -418,9 +429,12 @@ SecondPayUserDayli.statics.getByRange = function (params) {
         if (params.user.NameType == 'Рук. Филиала') {
             return resolve(reportUtils.getByRangeCostToHeadBranch(params));
         }
-        if (params.user.NameType == 'ОтделПродаж' || params.user.NameType == 'СуперАдминистратор') {
+        if (params.user.NameType == 'ОтделПродаж' ||
+            params.user.NameType == 'СуперАдминистратор' ||
+            params.user.NameType == 'ПЭО') {
             return resolve(reportUtils.getByRangeCostToMaster(params));
         }
+        return resolve({ cost: 0, result: 0 });
 
     });
 };
@@ -436,7 +450,7 @@ ClientUserDayli.statics.getToday = function (user) {
         params.model = local_model;
         params.user = user;
         params.range = { start: start_date, end: current_date }
-        return resolve(local_model.getByRange(params));      
+        return resolve(local_model.getByRange(params));
     });
 }
 
@@ -449,6 +463,6 @@ module.exports = {
     DrawUserDayli: db.model('draw_client_dayli', DrawUserDayli),
     ConsultUserDayli: db.model('consult_client_dayli', ConsultUserDayli),
     PayUserDayli: db.model('pay_client_dayli', PayUserDayli),
-    SecondPayUserDayli: db.model('second_pay_client_dayli', SecondPayUserDayli)
-
+    SecondPayUserDayli: db.model('second_pay_client_dayli', SecondPayUserDayli),
+    Salon: db.model('salon', salonModel)
 }

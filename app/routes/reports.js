@@ -1,6 +1,7 @@
 var express = require("express");
 var session = require("../middleware/session");
 var reports = require('../models/reports');
+var users = require('../models/user');
 var async = require("async");
 var route = express.Router();
 
@@ -183,9 +184,13 @@ route.get('/default/range/secondpay/:start/:end', session(), (req, res) => {
         },
         user: req.user
     }).then((data) => {
-        return res.send({ status: "OK", data: data.cost });
+        return res.send({
+            status: "OK", data: data.cost
+        });
     }).catch((err) => {
-        return res.send({ status: "ERROR", msg: err });
+        return res.send({
+            status: "ERROR", msg: err
+        });
     });
 });
 
@@ -200,6 +205,51 @@ route.get('/default/range/follow/:start/:end', session(), (req, res) => {
         return res.send({ status: "OK", data: data });
     }).catch((err) => {
         return res.send({ status: "ERROR", msg: err });
+    });
+})
+
+route.get('/salons/all', (req, res) => {
+    reports.Salon.findAll({}, (err, result) => {
+        if (err)
+            return res.send({ status: "ERROR", msg: err });
+        return res.send({ status: "OK", msg: null, salons: result });
+    })
+})
+
+route.get('/salons/stats/:start/:end', session(), (req, res) => {
+    reports.Salon.find({}, (err, result) => {
+        if (err)
+            return res.send({ status: "ERROR", msg: err });
+        result.map((item) => {
+            item._doc.stats = Math.random();
+        })
+        return res.send({ status: "OK", msg: null, salons: result });
+    })
+})
+
+route.get('/salon/:name/staff/stats/:start/:end', session(), (req, res) => {
+    users.find({ 'Sotrud.Deportament.Title': req.params.name }, (err, result) => {
+        if (err)
+            return res.send({ status: "ERROR", msg: err });
+        var reMap = result.reduce((result, item) => {
+            //item._doc.stats = Math.random() * 100;
+            result.push({
+                stats: Math.random(),
+                Title: item.Title
+            });
+            return result;
+        }, [])
+        return res.send({ status: "OK", msg: null, staff: reMap });
+    })
+})
+
+route.get('/salon/:name/staff/:staff', session(), (req, res) => {
+    return res.send({
+        status: "OK", msg: null, staff: {
+            stats: Math.random(),
+            name: req.params.name,
+            salon: req.params.staff
+        }
     });
 })
 

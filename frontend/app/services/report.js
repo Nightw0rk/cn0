@@ -66,6 +66,18 @@ app.factory("ReportService", function ($http, Session, $q) {
             $http.get(options.api.base_url + "/reports/default/range/secondpay/" + start + "/" + end + "?session=" + Session.data.session)
                 .then(body => { d.resolve(body.data.data) }, d.reject);
             return d.promise;
+        },
+        getSalonStats: function (start, end) {
+            var d = $q.defer();
+            $http.get(options.api.base_url + "/reports/salons/stats/" + start + "/" + end + "?session=" + Session.data.session)
+                .then(body => { d.resolve(body.data.salons) }, d.reject);
+            return d.promise;
+        },
+        getSalonStaffStats: function (name, start, end) {
+            var d = $q.defer();
+            $http.get(options.api.base_url + "/reports/salon/" + name + "/staff/stats/" + start + "/" + end + "?session=" + Session.data.session)
+                .then(body => { d.resolve(body.data.staff) }, d.reject);
+            return d.promise;
         }
     }
 });

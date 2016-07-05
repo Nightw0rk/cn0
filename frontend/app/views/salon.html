@@ -1,0 +1,21 @@
+<div layout="column" style="margin:15px;background:rgba(255,255,255,0.4)">
+    <div layout="columns" style="padding:10px;height:250px;line-height:250px;background:lightgreen">
+        <h1 style="display:block"> {{salonName}}</h1>
+    </div>
+    <div layout="row" flex>
+        <div layout="column">
+            <div google-chart chart="PlanChart" flex="80" style="min-height:250px"></div>
+            <div google-chart chart="ConversionChart" flex="80" style="min-height:250px"></div>
+        </div>
+        <md-content flex style="background:rgba(255,255,255,0.8)" flex="30">
+            <md-list layout-padding>
+                <md-list-item ng-repeat="item in staffStats" class="md-2-line">
+                    <div class="md-list-item-text">
+                        <h3><a href="#/salon/{{salonName}}/staff/{{item.Title}}">{{item.Title|limitTo:50}}</a></h3>
+                        <h4>{{item.stats|percentage}}</h4>
+                    </div>
+                </md-list-item>
+            </md-list>
+        </md-content>
+    </div>
+</div>

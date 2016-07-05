@@ -51,11 +51,24 @@ app.config(function ($routeProvider, $locationProvider, $mdThemingProvider, $mdI
             controller: 'LoginCtrl',
             templateUrl: 'app/views/login.html'
         })
+        .when("/salon/:name", {
+            controller: 'SalonCtrl',
+            templateUrl: 'app/views/salon.html'
+        })
+        .when("/salon/:name/staff/:staff", {
+            controller: 'StaffCtrl',
+            templateUrl: 'app/views/staff.html'
+        })
         .otherwise({
             redirectTo: "/"
         })
     //$locationProvider.html5Mode(true);
 })
+app.filter('percentage', ['$filter', function ($filter) {
+    return function (input, decimals) {
+        return $filter('number')(input * 100, decimals) + '%';
+    };
+}]);
 app.run(function ($rootScope, AuthService, $location, Session) {
     Session.load();
     $rootScope.back = function () {
@@ -80,7 +93,7 @@ app.controller('AppCtrl', function ($rootScope, $scope, $location, Session, Auth
     if (!AuthService.isAuthenticated()) {
         $location.path("/login")
     }
-    $scope.countClient = clients.data;
+    $scope.countClient = clients.data || 0;
     if ($scope.user.type != 'Консультант') {
         $scope._oc = {};
         $scope._oc.rows = [];
@@ -99,8 +112,8 @@ app.controller('AppCtrl', function ($rootScope, $scope, $location, Session, Auth
             $scope.ReportChart.type = 'BarChart';
         }
     }
-    $scope.countDraw = draw;
-    $scope.countZakaz = zakaz;
+    $scope.countDraw = draw || 0;
+    $scope.countZakaz = zakaz || 0;
     $scope.sumPay = pay;
     $scope.sumSecondPay = secondPay;
     $scope.user = Session.data;
@@ -123,6 +136,72 @@ app.controller('AppCtrl', function ($rootScope, $scope, $location, Session, Auth
                 $scope.FollowChart.type = 'BarChart';
             }
         }, console.log)
+        ReportService.getSalonStats($scope.start.getTime(), $scope.end.getTime()).then(
+            data => {
+                $scope.SalonsStats = data;
+            },
+            console.log
+        )
+    }
+    if ($scope.user.type == 'ПЭО') {
+        $scope.PlanChart = {
+            "type": "PieChart",
+            "displayed": false,
+            "data": {
+                "cols": [
+                    {
+                        "id": "month",
+                        "label": "Month",
+                        "type": "string",
+                        "p": {}
+                    },
+                    {
+                        "id": "laptop-id",
+                        "label": "Laptop",
+                        "type": "number",
+                        "p": {}
+                    },
+                ],
+                "rows": [
+                    {
+                        "c": [
+                            {
+                                "v": "Выполнено"
+                            },
+                            {
+                                "v": 2500014,
+                            }
+                        ]
+                    },
+                    {
+                        "c": [
+                            {
+                                "v": "Осталось"
+                            },
+                            {
+                                "v": 130000
+                            }
+                        ]
+                    },
+                ]
+            },
+            "options": {
+                "title": "План выполнения продаж",
+                "isStacked": "false",
+                "fill": 20,
+                "displayExactValues": true,
+                "vAxis": {
+                    "title": "Sales unit",
+                    "gridlines": {
+                        "count": 10
+                    }
+                },
+                "hAxis": {
+                    "title": "Date"
+                }
+            },
+            "formatters": {}
+        }
     }
     $scope.update = function () {
         ReportService.getClientsRange($scope.start.getTime(), $scope.end.getTime()).then(function (data) { $scope.countClient = data.count })
@@ -165,6 +244,321 @@ app.controller('DefaultCtrl', function ($rootScope, $scope, $location, Session, 
         $location.path("/login")
     }
 
+});
+app.controller('StaffCtrl', function ($rootScope, $scope, $location, Session, AuthService, ReportService, $routeParams) {
+    $scope.user = Session.data;
+    $rootScope.notPrimary = true;
+    if (!AuthService.isAuthenticated()) {
+        $location.path("/login")
+    }
+    $scope.salonName = $routeParams.name;
+    $scope.staffName = $routeParams.staff;
+    if ($scope.user.type == 'ПЭО') {
+        $scope.PlanChart = {
+            "type": "PieChart",
+            "displayed": false,
+            "data": {
+                "cols": [
+                    {
+                        "id": "month",
+                        "label": "Month",
+                        "type": "string",
+                        "p": {}
+                    },
+                    {
+                        "id": "laptop-id",
+                        "label": "Laptop",
+                        "type": "number",
+                        "p": {}
+                    },
+                ],
+                "rows": [
+                    {
+                        "c": [
+                            {
+                                "v": "Выполнено"
+                            },
+                            {
+                                "v": 2500014,
+                            }
+                        ]
+                    },
+                    {
+                        "c": [
+                            {
+                                "v": "Осталось"
+                            },
+                            {
+                                "v": 130000
+                            }
+                        ]
+                    },
+                ]
+            },
+            "options": {
+                "title": "План выполнения продаж",
+                "isStacked": "false",
+                "fill": 20,
+                "displayExactValues": true,
+                "vAxis": {
+                    "title": "Sales unit",
+                    "gridlines": {
+                        "count": 10
+                    }
+                },
+                "hAxis": {
+                    "title": "Date"
+                }
+            },
+            "formatters": {}
+        }
+    }
+    $scope.ConversionChart = {
+        "type": "AreaChart",
+        "displayed": false,
+        "data": {
+            "cols": [
+                {
+                    "id": "month",
+                    "label": "Month",
+                    "type": "string",
+                    "p": {}
+                },
+                {
+                    "id": "laptop-id",
+                    "label": "Заказы",
+                    "type": "number",
+                    "p": {}
+                },
+                {
+                    "id": "desktop-id",
+                    "label": "Прорисовки",
+                    "type": "number",
+                    "p": {}
+                },
+                {
+                    "id": "server-id",
+                    "label": "Консультанции",
+                    "type": "number",
+                    "p": {}
+                },
+            ],
+            "rows": [
+                {
+                    "c": [
+                        {
+                            "v": "Январь"
+                        },
+                        {
+                            "v": 19,
+                            "f": "42 items"
+                        },
+                        {
+                            "v": 12,
+                            "f": "Ony 12 items"
+                        },
+                        {
+                            "v": 7,
+                            "f": "7 servers"
+                        },
+                        {
+                            "v": 4
+                        }
+                    ]
+                },
+                {
+                    "c": [
+                        {
+                            "v": "Февраль"
+                        },
+                        {
+                            "v": 13
+                        },
+                        {
+                            "v": 1,
+                        },
+                        {
+                            "v": 12
+                        },
+                        {
+                            "v": 2
+                        }
+                    ]
+                },
+                {
+                    "c": [
+                        {
+                            "v": "Март"
+                        },
+                        {
+                            "v": 24
+                        },
+                        {
+                            "v": 5
+                        },
+                        {
+                            "v": 11
+                        },
+                        {
+                            "v": 6
+                        }
+                    ]
+                }
+            ]
+        },
+        "options": {
+            "title": "Статистика",
+            "isStacked": "true",
+            "fill": 20,
+            "displayExactValues": true,
+            "vAxis": {
+                "title": "Кол-во",
+                "gridlines": {
+                    "count": 10
+                }
+            },
+            "hAxis": {
+                "title": "Date"
+            }
+        },
+        "formatters": {}
+    }
+});
+app.controller('SalonCtrl', function ($rootScope, $scope, $location, Session, AuthService, ReportService, $routeParams) {
+    $scope.user = Session.data;
+    $rootScope.notPrimary = true;
+    if (!AuthService.isAuthenticated()) {
+        $location.path("/login")
+    }
+    $scope.salonName = $routeParams.name;
+    if ($scope.user.type == 'ПЭО') {
+        $scope.PlanChart = {
+            "type": "PieChart",
+            "displayed": false,
+            "data": {
+                "cols": [
+                    {
+                        "id": "month",
+                        "label": "Month",
+                        "type": "string",
+                        "p": {}
+                    },
+                    {
+                        "id": "laptop-id",
+                        "label": "Laptop",
+                        "type": "number",
+                        "p": {}
+                    },
+                ],
+                "rows": [
+                    {
+                        "c": [
+                            {
+                                "v": "Выполнено"
+                            },
+                            {
+                                "v": 2500014,
+                            }
+                        ]
+                    },
+                    {
+                        "c": [
+                            {
+                                "v": "Осталось"
+                            },
+                            {
+                                "v": 130000
+                            }
+                        ]
+                    },
+                ]
+            },
+            "options": {
+                "title": "План выполнения продаж",
+                "isStacked": "false",
+                "fill": 20,
+                "displayExactValues": true,
+                "vAxis": {
+                    "title": "Sales unit",
+                    "gridlines": {
+                        "count": 10
+                    }
+                },
+                "hAxis": {
+                    "title": "Date"
+                }
+            },
+            "formatters": {}
+        }
+    }
+    ReportService.getSalonStaffStats($scope.salonName, 0, 0)
+        .then(data => {
+            $scope.staffStats = data;
+            var r = $scope.staffStats.reduce(function (result, item) {
+                result.except += 1;
+                result.actual += item.stats;
+                return result;
+            }, { except: 0, actual: 0 })
+            $scope.ConversionChart = {
+                "type": "PieChart",
+                "displayed": false,
+                "data": {
+                    "cols": [
+                        {
+                            "id": "month",
+                            "label": "Month",
+                            "type": "string",
+                            "p": {}
+                        },
+                        {
+                            "id": "laptop-id",
+                            "label": "Laptop",
+                            "type": "number",
+                            "p": {}
+                        },
+                    ],
+                    "rows": [
+                        {
+                            "c": [
+                                {
+                                    "v": "Текущий"
+                                },
+                                {
+                                    "v": r.except,
+                                }
+                            ]
+                        },
+                        {
+                            "c": [
+                                {
+                                    "v": "Осталось"
+                                },
+                                {
+                                    "v": r.actual
+                                }
+                            ]
+                        },
+                    ]
+                },
+                "options": {
+                    "title": "Конверсия салона",
+                    "isStacked": "false",
+                    "fill": 20,
+                    "displayExactValues": true,
+                    "vAxis": {
+                        "title": "Sales unit",
+                        "gridlines": {
+                            "count": 10
+                        }
+                    },
+                    "hAxis": {
+                        "title": "Date"
+                    }
+                },
+                "formatters": {}
+            }
+        },
+        console.log);
 });
 app.controller('ReportCtrl', function ($rootScope, $scope, $location, Session, ReportService, $mdToast, AuthService) {
     if (!AuthService.isAuthenticated()) {
