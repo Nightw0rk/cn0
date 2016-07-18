@@ -2,7 +2,7 @@
 var options = {};
 options.msInDay = 86400000;
 options.api = {};
-options.api.base_url = "http://crm.lorena-kuhni.ru:2080";
+options.api.base_url = "http://localhost:2080";
 var app = angular.module('CRM', ['ngMaterial', 'ngRoute', 'googlechart']);
 app.config(function ($routeProvider, $locationProvider, $mdThemingProvider, $mdIconProvider) {
     $mdIconProvider
@@ -560,7 +560,49 @@ app.controller('SalonCtrl', function ($rootScope, $scope, $location, Session, Au
         },
         console.log);
 });
-app.controller('ReportCtrl', function ($rootScope, $scope, $location, Session, ReportService, $mdToast, AuthService) {
+app.controller('SelectClientCtrl', function ($scope, $mdDialog, $http, Session, $q) {
+    $scope.closeDialog = function () {
+        $mdDialog.hide(null);
+    }
+    $scope.querySearch = function (text) {
+        var d = $q.defer();
+        if (!text) {
+            d.reject("");
+            return d.promise;
+        }
+        if (!Session.data) return d.reject("Не авторизван");
+        $http.get(options.api.base_url + "/clients/suggestion?q=" + text + "&session=" + Session.data.session).then((body) => {
+            if (!body.data.data) return d.reject("Не найден")
+            if (!body.data.data.hits.total) return d.reject("Не найден")
+            return d.resolve(body.data.data.hits.hits);
+        }, (err) => {
+            d.reject(err);
+        })
+        return d.promise;
+    }
+
+    $scope.newClient = function () {
+        $mdDialog.hide(false);
+    }
+    $scope.selectedItemChange = function (item) {
+        //$log.info('Item changed to ' + JSON.stringify(item));
+        $mdDialog.hide(item._source);
+    }
+})
+
+app.controller('AddClientCtrl', function ($scope,$mdDialog,Session,$http) {
+    $scope.closeDialog = function(){
+        $mdDialog.hide();
+    }
+    $scope.save = function(){
+        $http.post(options.api.base_url + "/clients/?session="+Session.data.session,{client:$scope.client}).then(function(){
+            $mdDialog.hide($scope.client);
+        })
+    }
+})
+
+app.controller('ReportCtrl', function ($rootScope, $scope, $location,
+    Session, ReportService, $mdToast, AuthService, $mdDialog) {
     if (!AuthService.isAuthenticated()) {
         $location.path("/login")
     }
@@ -573,6 +615,26 @@ app.controller('ReportCtrl', function ($rootScope, $scope, $location, Session, R
     }
     $scope.report.salon = $scope.salons[0];
     $rootScope.notPrimary = true;
+    $scope.selectClient = function () {
+        $mdDialog.show({
+            controller: 'SelectClientCtrl',
+            parent: angular.element(document.body),
+            templateUrl: 'app/views/dialogSelectClient.html',
+            openFrom: "#btnSelectClient"
+        }).then(function (result) {
+            if(result==null) return;
+            if (!result) {
+                $mdDialog.show({
+                    controller: 'AddClientCtrl',
+                    parent: angular.element(document.body),
+                    templateUrl: 'app/views/dialogCreateClient.html',
+                    openFrom: "#btnSelectClient"
+                })
+            } else {
+                $scope.report.client = result;
+            }
+        })
+    }
     $scope.save = function () {
         if (!$scope.report.follow) {
             var toast = $mdToast.simple()

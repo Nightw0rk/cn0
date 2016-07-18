@@ -5,10 +5,10 @@ module.exports = function (params) {
         user.getUserBySession(session)
             .then((user) => {
                 req.user = user;
-                next(null);
+                return next(null);                
             })
             .catch((err) => {                
-                res.send(err);
+                return res.send(err);                
             });
     }
 }

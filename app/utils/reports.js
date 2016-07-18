@@ -235,7 +235,7 @@ module.exports = {
                 },
                 {
                     $group: {
-                        _id: { day: "$day", month: "$month", year: "$year", group: "$salon" },
+                        _id: { day: "$day", month: "$month", year: "$year", group: "$salon", type:"$type" },
                         count: { $sum: "$count" }
                     }
                 }

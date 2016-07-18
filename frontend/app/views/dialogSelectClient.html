@@ -1,0 +1,36 @@
+<md-dialog aria-label="List dialog" style="min-width:600px;min-height:800px">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Выбор клиента</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="cancel()">
+                <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <md-content style="margin:10pt;min-height:650px">
+            <md-autocomplete 
+                id="acClientSelect" 
+                md-selected-item="selectedClient" 
+                md-search-text="searchText" 
+                md-items="item in querySearch(searchText)"
+                md-selected-item-change="selectedItemChange(item)"
+                md-item-text="item._source.name+' '+item._source.family" md-min-length="0" placeholder="Ввеидте имя, фамилию, телефон, адрес">
+                <md-item-template>
+                    <span md-highlight-text="searchText" md-highlight-flags="^i">{{item._source.name}}</span>
+                    <span md-highlight-text="searchText" md-highlight-flags="^i">{{item._source.family}}</span>
+                    <span md-highlight-text="searchText" md-highlight-flags="^i">{{item._source.phone}}</span>
+                    <span md-highlight-text="searchText" md-highlight-flags="^i">{{item._source.city}}</span>
+                </md-item-template>
+                <md-not-found>
+                    <span>Клиент не найден,</span>
+                    <a ng-click="newClient()">добавить новго</a>
+                </md-not-found>
+            </md-autocomplete>
+        </md-content>
+    </md-dialog-content>
+    <md-dialog-actions>        
+        <md-button ng-click="closeDialog()" class="md-primary md-raised">Отмена</md-button>        
+    </md-dialog-actions>
+</md-dialog>

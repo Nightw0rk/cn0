@@ -8,3 +8,7 @@ md-grid-tile {
 .md-datepicker-input-container,.md-datepicker-calendar{
   background: white;
 }
+.md-autocomplete-suggestions-container.md-default-theme li .highlight,
+.md-autocomplete-suggestions-container li .highlight {
+  color:#336699;
+}

@@ -1,0 +1,53 @@
+<md-dialog aria-label="List dialog" style="min-width:600px;min-height:800px">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Новый клиент</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="cancel()">
+                <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <md-content layout-padding>
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>Фамилия</label>
+                <input ng-model="client.family" />
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>Имя</label>
+                <input ng-model="client.name" />
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>Отчество</label>
+                <input ng-model="client.second_name" />
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>Телефон</label>
+                <input ng-model="client.phone" />
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>Пол</label>
+                <md-select ng-model="client.sex">
+                    <md-option value="Мужской">Мужской</md-option>
+                    <md-option value="Женский">Женский</md-option>
+                </md-select>
+            </md-input-container>
+            <div layout-gt-xs="row">
+                <md-datepicker ng-model="client.birthdate" md-placeholder="Дата рождения"></md-datepicker>
+            </div>
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>Город</label>
+                <input ng-model="client.city" />
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>Адрес</label>
+                <input ng-model="client.address" />
+            </md-input-container>
+        </md-content>
+    </md-dialog-content>
+    <md-dialog-actions>
+        <md-button ng-click="save()" class="md-primary md-raised">Сохранить</md-button>
+        <md-button ng-click="closeDialog()" class="md-primary md-raised">Отмена</md-button>
+    </md-dialog-actions>
+</md-dialog>

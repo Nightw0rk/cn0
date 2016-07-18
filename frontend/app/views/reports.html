@@ -2,7 +2,12 @@
     <md-tabs md-dynamic-height md-border-bottom>
         <md-tab label="Стандартный отчет о поситителе" style="padding:25px;background:#fff" layout="column" layout-align="center">
             <div style="padding:0 25px 0 25px;background:#fff">
-                <md-content md-theme="docs-dark" layout-gt-sm="row" layout-padding>
+                <md-content layout-gt-sm="row" layout-padding>
+                    <md-button class="md-raised" ng-click="selectClient()" id="btnSelectClient">
+                        {{report.client?report.client.name+' '+report.client.family:'Выбор клиента'}}
+                    </md-button>
+                </md-content>
+                <md-content layout-gt-sm="row" layout-padding>
                     <div>
                         <h3>Место обращения</h3>
                         <md-input-container>
@@ -13,7 +18,7 @@
                         </md-input-container>
                     </div>
                 </md-content>
-                <md-content md-theme="docs-dark" layout-gt-sm="row" layout-padding>
+                <!--<md-content md-theme="docs-dark" layout-gt-sm="row" layout-padding>
                     <div>
                         <h3>Общие данные</h3>
                         <md-input-container>
@@ -49,7 +54,7 @@
                             <input ng-model="report.address">
                         </md-input-container>
                     </div>
-                </md-content>
+                </md-content>-->
                 <md-content layout-gt-sm="column" layout-padding>
                     <div flex>
                         <h3>Данные заказе</h3>

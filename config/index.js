@@ -4,5 +4,8 @@ module.exports = {
     },
     db:{
         connection_string:"mongodb://192.168.0.176:2717/crm"
+    },
+    es:{
+
     }
 }

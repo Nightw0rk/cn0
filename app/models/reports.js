@@ -74,17 +74,22 @@ function UpdateCostDayliReport(local_model, current_date, salon, pay, user, cb) 
     )
 }
 
+var clientModel = db.Schema({
+    name: String, // Имя 
+    family: String, // Фамилия
+    second_name: String, // Отчество
+    phone:  {type: String, index: { unique: true }}, // Телефон
+    birthdate: Date, // Дата рождения
+    sex: String, // Пол 
+    city: String, // Город
+    address: String, //Адрес
+});
+
 var defaultReport = db.Schema({
     stamp: { type: Date, defualt: Date.now() },
-    author: user.schema,
-    name: String,
-    family: String,
-    second_name: String,
-    phone: String,
-    birthdate: Date,
-    city: String,
-    salon: String,
-    address: String,
+    author: user.schema, 
+    client: clientModel,   
+    salon: String,    
     consult: Boolean,
     follow: String, //  Откуда пришел
     zakaz: Boolean,
@@ -464,5 +469,6 @@ module.exports = {
     ConsultUserDayli: db.model('consult_client_dayli', ConsultUserDayli),
     PayUserDayli: db.model('pay_client_dayli', PayUserDayli),
     SecondPayUserDayli: db.model('second_pay_client_dayli', SecondPayUserDayli),
-    Salon: db.model('salon', salonModel)
+    Salon: db.model('salon', salonModel),
+    client:db.model('client',clientModel)
 }
