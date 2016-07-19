@@ -18,7 +18,7 @@ dns.resolve4(process.env.MONGO_HOST || '192.168.0.176', function (err, address) 
   }
   dns.resolve4(process.env.ES_HOST || '192.168.0.176:9200', function (err, address) {
     config.es.client = new es.Client({
-      host: address ? address.join : '192.168.0.176:9200',
+      host: address ? address.join(":9200,")+":9200" : '192.168.0.176:9200',
       log: 'trace'
     })
     app.use("/auth", require("./app/routes/auth"));
