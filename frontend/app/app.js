@@ -2,7 +2,7 @@
 var options = {};
 options.msInDay = 86400000;
 options.api = {};
-options.api.base_url = "http://crm.lorena-kuhni.ru:2080";
+options.api.base_url = "http://localhost:2080";
 var app = angular.module('CRM', ['ngMaterial', 'ngRoute', 'googlechart']);
 app.config(function ($routeProvider, $locationProvider, $mdThemingProvider, $mdIconProvider) {
     $mdIconProvider
@@ -42,6 +42,10 @@ app.config(function ($routeProvider, $locationProvider, $mdThemingProvider, $mdI
         .when("/app", {
             controller: 'AppCtrl',
             templateUrl: 'app/views/main.html'
+        })
+        .when("/calendar", {
+            controller: 'CalendarCtrl',
+            templateUrl: 'app/views/calendar.html'
         })
         .when("/reports/add", {
             controller: 'ReportCtrl',
@@ -232,7 +236,7 @@ app.controller('AppCtrl', function ($rootScope, $scope, $location, Session, Auth
     }
 
 });
-app.controller('DefaultCtrl', function ($rootScope, $scope, $location, Session, AuthService) {
+app.controller('DefaultCtrl', function ($rootScope, $scope, $http, $location, $interval, Session, AuthService) {
     $scope.user = Session.data;
     $rootScope.notPrimary = false;
     if (!AuthService.isAuthenticated()) {
@@ -243,6 +247,27 @@ app.controller('DefaultCtrl', function ($rootScope, $scope, $location, Session, 
         localStorage.setItem('session', undefined);
         $location.path("/login")
     }
+    $scope.notificationClose = function (a, b, c) {
+        console.log(a, b, c);
+    }
+    $interval(function () {
+        if (Notification.permission == 'granted') {
+            $http.get(options.api.base_url + "/user/notification/" +
+                "?session=" + Session.data.session)
+                .then(function (body) {
+                    body.data.notifications.forEach(function (element) {
+                        var notification = new Notification(element.message, {
+                            body: element.message,
+                            tag: element.action + "_" + element._id
+                        })
+                        notification.onclick = $scope.notificationClose;
+                        notification.onclose = $scope.notificationClose;
+                    }, this);
+                })
+        } else {
+            Notification.requestPermission();
+        }
+    }, 30000);
 
 });
 app.controller('StaffCtrl', function ($rootScope, $scope, $location, Session, AuthService, ReportService, $routeParams) {
@@ -590,16 +615,118 @@ app.controller('SelectClientCtrl', function ($scope, $mdDialog, $http, Session, 
     }
 })
 
-app.controller('AddClientCtrl', function ($scope,$mdDialog,Session,$http) {
-    $scope.closeDialog = function(){
+app.controller('AddClientCtrl', function ($scope, $mdDialog, Session, $http) {
+    $scope.closeDialog = function () {
         $mdDialog.hide();
     }
-    $scope.save = function(){
-        $http.post(options.api.base_url + "/clients/?session="+Session.data.session,{client:$scope.client}).then(function(){
+    $scope.save = function () {
+        $http.post(options.api.base_url + "/clients/?session=" + Session.data.session, { client: $scope.client }).then(function () {
             $mdDialog.hide($scope.client);
         })
     }
 })
+
+app.controller('CalendarCtrl', function ($scope, $rootScope, AuthService, $http, Session, $mdDialog) {
+    if (!AuthService.isAuthenticated()) {
+        $location.path("/login")
+    }
+    $rootScope.notPrimary = true;
+    $scope.addEvent = function () {
+        var confirm = $mdDialog.prompt()
+            .title('Новое событие')
+            .placeholder('Название')
+            .ariaLabel('Название')
+            .ok('Сохранить!')
+        $mdDialog.show(confirm).then(function (result) {
+            var event = {
+                title: result,
+                start: new Date(),
+                end: new Date(new Date().getTime() + 60 * 60 * 1000)
+            }
+            $http.post(
+                options.api.base_url + "/user/event/" +
+                "?session=" + Session.data.session, event)
+                .then(function (body) {
+                    event._id = body.data.id;
+                    $('#calendar').fullCalendar('renderEvent', event);
+                });
+        }, function () {
+            $scope.status = 'You didn\'t name your dog.';
+        });
+    }
+    $scope.events = [];
+    $scope.showDetail = function (data) {
+        var confirm = $mdDialog.prompt()
+            .title('Отчет по событию')
+            .textContent('Опишите результат работы.')
+            .placeholder('Результат работы')
+            .ariaLabel('Результат работы')
+            .ok('Выполнено!')
+            .cancel('Я еще поработаю над этим');
+        $mdDialog.show(confirm).then(function (result) {
+            $http.delete(
+                options.api.base_url + "/user/event/" + data._id +
+                "?session=" + Session.data.session, result)
+                .then(function (body) {
+                    $('#calendar').fullCalendar('removeEvents', data._id);
+                });
+            $('#calendar').fullCalendar('removeEvents', data._id);
+        }, function () {
+            $scope.status = 'You didn\'t name your dog.';
+        });
+    }
+    $(document).ready(function () {
+
+        // page is now ready, initialize the calendar...
+
+        var calendar = $('#calendar').fullCalendar({
+            events: function (start, end, timezone, callback) {
+                $http.get(
+                    options.api.base_url + "/user/events/" + start.unix() + "/" + end.unix() +
+                    "?session=" + Session.data.session)
+                    .then((body) => {
+                        callback(body.data.events);
+                    })
+            },
+            editable: true, // Don't allow editing of events
+            handleWindowResize: true,
+            weekends: true, // Hide weekends
+            defaultView: 'agendaWeek', // Only show week view
+            header: false, // Hide buttons/titles
+            minTime: '07:30:00', // Start time for the calendar
+            maxTime: '22:00:00', // End time for the calendar
+            timezone: 'local',
+            firstDay: 1,
+            columnFormat: {
+                week: 'ddd' // Only show day of the week names
+            },
+            eventResize: function (event, b, c) {
+                $http.patch(
+                    options.api.base_url + "/user/event/" + event._id +
+                    "?session=" + Session.data.session, event)
+                    .then((body) => {
+                        console.log("Resized");
+                    })
+            },
+            eventDrop: function (event, b, c) {
+                $http.patch(
+                    options.api.base_url + "/user/event/" + event._id +
+                    "?session=" + Session.data.session, event)
+                    .then((body) => {
+                        console.log("Moved");
+                    })
+            },
+            displayEventTime: true, // Display event time
+            eventRender: function (event, element) {
+                element.attr('href', 'javascript:void(0);');
+                element.attr('event-id', event._id);
+                element.click(function () {
+                    $scope.showDetail(event);
+                });
+            }
+        })
+    });
+});
 
 app.controller('ReportCtrl', function ($rootScope, $scope, $location,
     Session, ReportService, $mdToast, AuthService, $mdDialog) {
@@ -622,7 +749,7 @@ app.controller('ReportCtrl', function ($rootScope, $scope, $location,
             templateUrl: 'app/views/dialogSelectClient.html',
             openFrom: "#btnSelectClient"
         }).then(function (result) {
-            if(result==null) return;
+            if (result == null) return;
             if (!result) {
                 $mdDialog.show({
                     controller: 'AddClientCtrl',

@@ -1,34 +1,50 @@
 var db = require("../middleware/db");
 var q = require("bluebird");
 var uuid = require("node-uuid");
-var deportament  = db.Schema({
-  Id:Number,
-  ParentId:Number,
-  Title:String,
-  ShortTitle:String,
-  HeadId:Number,
-  IsTrgPoint:Boolean
+var deportament = db.Schema({
+    Id: Number,
+    ParentId: Number,
+    Title: String,
+    ShortTitle: String,
+    HeadId: Number,
+    IsTrgPoint: Boolean
 })
 var conntactionFaceZakaz = db.Schema({
-    NameOrg:String
+    NameOrg: String
 })
 var sotrud = db.Schema({
-    Id:Number,
-    Family:String,
-    SecondName:String,
-    Name:String,
-    Profession:String,
-    Deportament:deportament,
-    ConntactionFaceZakaz:conntactionFaceZakaz
+    Id: Number,
+    Family: String,
+    SecondName: String,
+    Name: String,
+    Profession: String,
+    Deportament: deportament,
+    ConntactionFaceZakaz: conntactionFaceZakaz
 })
 
 var user = db.Schema({
     Title: String,
     Password: String,
-    session:  String,
+    session: String,
     NameType: String,
-    Sotrud:sotrud,
-    NameOfLevelAccess:String
+    Sotrud: sotrud,
+    NameOfLevelAccess: String
+})
+
+var notification = db.Schema({
+    user: user,
+    message: String,
+    action: String,
+    closed: Boolean
+});
+
+var events = db.Schema({
+    user: user,
+    start: Date,
+    end: Date,
+    title: String,
+    result: String,
+    closed: Boolean
 })
 
 user.statics.createNewSession = function (userName, userPassword) {
@@ -36,17 +52,17 @@ user.statics.createNewSession = function (userName, userPassword) {
     return new q(function (resolve, reject) {
         db.model("User", user).findOne({ Title: userName, Password: userPassword }, function (err, user) {
             if (err) {
-                console.log("auth err",err);
+                console.log("auth err", err);
                 return reject(err);
             }
             if (!user) {
-                console.log("auth err","not users");
+                console.log("auth err", "not users");
                 return reject({ status: "ERROR", msg: "Пользователь не найден" });
             }
             user.session = uuid.v4();
             user.save(function (err) {
                 if (err) {
-                    console.log("save auth err",err);
+                    console.log("save auth err", err);
                     reject(err);
                 }
                 resolve(user);
@@ -65,7 +81,7 @@ user.methods.isInferior = function (user) {
 
 user.statics.getUserBySession = function (session) {
     return new q(function (resolve, reject) {
-        console.log("Find user with session",session);
+        console.log("Find user with session", session);
         db.model("User", user).findOne({ session: session }, function (err, user) {
             if (err) {
                 return reject(err);
@@ -79,4 +95,6 @@ user.statics.getUserBySession = function (session) {
 }
 var result = db.model("User", user);
 result.schema = user;
+result.notifications = db.model("Notification", notification);
+result.events = db.model("Event", events);
 module.exports = result;

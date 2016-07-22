@@ -22,6 +22,7 @@ dns.resolve4(process.env.MONGO_HOST || '192.168.0.176', function (err, address) 
       log: 'trace'
     })
     app.use("/auth", require("./app/routes/auth"));
+    app.use("/user", require("./app/routes/users"));
     app.use("/reports", require("./app/routes/reports"));
     app.use("/clients",require("./app/routes/clients"))
   })
