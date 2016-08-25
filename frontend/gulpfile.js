@@ -90,12 +90,11 @@ function replaceDevelopCss(file, enc, cb) {
     var r = new RegExp("<!-- #start develop_css-->(.+)<!-- #end develop_css-->", "g");
     var content = String(file.contents);
     var match = r.exec(content);
-    if (match) {
-        console.log("find develop components CSS");
+    if (match) {                    
         var jss = new RegExp('<link.+?href="(.+?)".+?>', "g");
         var m;
         var js_files = [];
-        while ((m = jss.exec(match[1])) !== null) {
+        while ((m = jss.exec(match[1])) !== null) {            
             if (m.index === jss.lastIndex) {
                 jss.lastIndex++;
             }
@@ -103,6 +102,7 @@ function replaceDevelopCss(file, enc, cb) {
                 js_files.push(m[1]);
             }
         }
+        console.log(js_files);
         gulp.src(js_files)
             .on('error', console.log)
             .pipe(cssnano())
@@ -110,6 +110,7 @@ function replaceDevelopCss(file, enc, cb) {
             .pipe(gulp.dest("build/app/assets/styles"))
             .on('end', function (e, c) {
                 if (e) {
+                    console.log('Ошибка обработки файла', file, e);
                     cb(e, file);
                 }
                 content = content.replace(r, "<link rel=\"stylesheet\" href=\"/app/assets/styles/app.min.css\"/>");
@@ -143,7 +144,7 @@ function replaceDevelopJs(file, enc, cb) {
         gulp.src(js_files)
             .on('error', console.log)
             .pipe(th2.obj(replaceHost))
-            .pipe(concat("app.min.js"))           
+            .pipe(concat("app.min.js"))
             .pipe(gulp.dest("build/app/assets/js"))
             .on('end', function (e, c) {
                 if (e) {
