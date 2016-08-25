@@ -2,7 +2,9 @@
 var options = {};
 options.msInDay = 86400000;
 options.api = {};
+//#start_base_url_config
 options.api.base_url = "http://localhost:2080";
+//#end_base_url_config
 var app = angular.module('CRM', ['ngMaterial', 'ngRoute', 'googlechart']);
 app.config(function ($routeProvider, $locationProvider, $mdThemingProvider, $mdIconProvider) {
     $mdIconProvider

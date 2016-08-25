@@ -1,3 +1,4 @@
 node_modules/*
 .vscode/*
 frontend/bower_components
+frontend/build

@@ -4,6 +4,7 @@
 <head>
     <base href="/">
     <meta charset="utf-8" />
+    <!-- #start bower_js-->
     <script src="./bower_components/angular/angular.min.js"></script>
     <script src="./bower_components/angular-material/angular-material.min.js"></script>
     <script src="./bower_components/angular-animate/angular-animate.min.js"></script>
@@ -13,14 +14,21 @@
     <script src="./bower_components/jquery/dist/jquery.min.js"></script>
     <script src="./bower_components/moment/moment.js"></script>
     <script src="./bower_components/fullcalendar/dist/fullcalendar.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-google-chart/0.1.0/ng-google-chart.min.js" type="text/javascript"></script>
+    <script src="./app/assets/js/3thd-party/ng-google-chart.min.js" type="text/javascript"></script>
+    <!-- #end bower_js-->
+    <!-- #start bower_css-->
     <link rel="stylesheet" href="./bower_components/angular-material/angular-material.min.css" />
-    <link rel="stylesheet" href="./bower_components//fullcalendar/dist/fullcalendar.min.css" />
-    <link rel="stylesheet" href="./app/assets/styles/app.css" />
-    <link rel="stylesheet" href="./app/assets/styles/calendar.css" />
+    <link rel="stylesheet" href="./bower_components/fullcalendar/dist/fullcalendar.min.css" />
+    <!-- #end bower_css-->
+    <!-- #start develop_js-->
     <script src="./app/app.js"></script>
     <script src="./app/services/user.js"></script>
     <script src="./app/services/report.js"></script>
+    <!-- #end develop_js-->
+    <!-- #start develop_css-->
+    <link rel="stylesheet" href="./app/assets/styles/app.css" />
+    <link rel="stylesheet" href="./app/assets/styles/calendar.css" />
+    <!-- #end develop_css-->
 </head>
 
 <body ng-controller="DefaultCtrl" layout="column">

@@ -12,7 +12,7 @@
     "async": "^2.0.0-rc.5",
     "bluebird": "^3.3.5",
     "body-parser": "^1.15.1",
-    "cors": "^2.7.1",    
+    "cors": "^2.7.1",
     "elasticsearch": "^11.0.1",
     "express": "^4.13.4",
     "express-json": "^1.0.0",
@@ -21,12 +21,21 @@
     "q": "^1.4.1"
   },
   "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-cssnano": "^2.1.2",
+    "gulp-htmlmin": "^2.0.0",
+    "gulp-livereload": "^3.8.1",
+    "gulp-uglify": "^2.0.0",
+    "gulp-uglifyjs": "^0.6.2",
+    "mkdirp": "^0.5.1",
     "mocha": "^2.4.5",
     "mongoose-mock": "^0.4.0",
     "proxyquire": "^1.7.9",
     "should": "^9.0.2",
     "sinon": "^1.17.4",
     "sinon-mongoose": "^1.2.1",
-    "supertest": "^1.2.0"
+    "supertest": "^1.2.0",
+    "through2": "^2.0.1"
   }
 }
