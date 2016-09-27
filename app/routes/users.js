@@ -1,5 +1,6 @@
 var express = require("express");
 var user = require("../models/user")
+var task = require("../models/tasks")
 var session = require("../middleware/session");
 var route = express.Router();
 
@@ -21,7 +22,7 @@ route.delete("/notification/:id", session(), function (req, res) {
 })
 
 route.get("/events/:start/:end", session(), (req, res) => {
-    user.events.find({ 'user._id': req.user._id, closed: false }, (err, events) => {
+    task.find({ 'responsible._id': req.user._id, closed: false }, (err, events) => {
         var ev = [];
         events.forEach(function (element) {
             delete element._doc.user;
@@ -32,7 +33,7 @@ route.get("/events/:start/:end", session(), (req, res) => {
 });
 
 route.delete("/event/:id", session(), (req, res) => {
-    user.events.findOne({ 'user._id': req.user._id, _id: req.params.id }, (err, event) => {
+    task.findOne({ 'responsible._id': req.user._id, _id: req.params.id }, (err, event) => {
         if (err || !event)
             return res.send({ status: "OK" });
         event.result = req.body.result;
@@ -44,7 +45,7 @@ route.delete("/event/:id", session(), (req, res) => {
 });
 
 route.patch("/event/:id", session(), (req, res) => {
-    user.events.findOne({ 'user._id': req.user._id, _id: req.params.id }, (err, event) => {
+    task.findOne({ 'responsibleuser._id': req.user._id, _id: req.params.id }, (err, event) => {
         if (err || !event)
             return res.send({ status: "OK" });
         event.start = new Date(req.body.start);
@@ -60,8 +61,8 @@ route.post("/event", session(), (req, res) => {
         return res.send({ status: "ERROR", message: "Нет времени старта" });
     if (!req.body.title)
         return res.send({ status: "ERROR", message: "Нет название события" });
-    var event = new user.events({
-        user: req.user,
+    var event = new task({
+        responsible: req.user,
         start: new Date(req.body.start),
         closed: false,
         end: req.body.end ? new Date(req.body.end) : new Date(new Date(req.body.start).getTime() + 60 * 30 * 1000),

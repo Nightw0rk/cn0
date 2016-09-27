@@ -1,8 +1,9 @@
 var express = require("express");
 const assert = require('assert');
 var user = require("../models/user")
-var db = require("../models/reports")
+var db = require("../models/client")
 var session = require("../middleware/session");
+var analystic = require("../middleware/analystic");
 var config = require("../../config");
 var route = express.Router();
 
@@ -31,41 +32,78 @@ route.post("/", session(), (req, res) => {
         city: req.body.client.city || '', // Город
         address: req.body.client.address || '', //Адрес
     }
-    var client = new db.client(body);
-    client.save()
-        .then(item => {
+    var client =
+        new db.client(body).save((errSave, item) => {
             return config.es.client.create({
                 index: 'crm',
                 type: 'client',
                 id: item._id.toString(),
                 body: body
-            }).catch(_ => {
-                body._id = item.id;
+            })
+                .then(_ => {
+                    return analystic.newVisitor(item._id, req.user)
+                })
+                .then(_ => {
+                    return res.send({ status: "OK" })
+                })
+                .catch(err => {
+                    if (body._id) {
+                        db.client.remove({ _id: body._id });
+                        config.es.client.delete({
+                            index: 'crm',
+                            type: 'client',
+                            id: body._id.toString(),
+                        })
+                    }
+                    var mmsg = err;
+                    if (err.code == 11000 && /phone_1/.test(err.errmsg)) {
+                        mmsg = "Такой номер телефона уже зарегистрирован";
+                    }
+                    if (err.code == 11000 && /city_1_address_1/.test(err.errmsg)) {
+                        mmsg = "Такой адрес уже зарегистрирован";
+                    }
+                    return res.send({ status: "ERROR", msg: mmsg });
+                });
+        })
+});
+/**
+ * Добавить запись в Timeline
+ * 
+ */
+route.post('/:client/timeline', session(), (req, res) => {       
+    if (!req.body || !req.body.action)
+        return res.send({ status: "ERROR", msg: 'Пустой запрос' });
+    db.client.findOne({ _id: req.params.client }, (err, client) => {
+        if (err)
+            return res.send({ status: "ERROR", msg: err.message, err: err });
+        client.timeline.push({
+            stamp: new Date(),
+            agent: req.user,
+            salon: req.user.Deportament,
+            action: req.body.action,
+            payload: req.body.payload
+        });
+        var action = {
+            name: req.body.action,
+        }
+        switch (action.name) {
+            case 'Консультация':
+                action.payload = req.body.payload.source
+                break;
+        }
+        client.save((err, item) => {
+            analystic.newAction(
+                client._id,
+                action,
+                req.user
+            ).then(_ => {
+                res.send({
+                    status: "OK"
+                })
             })
         })
-        .then(_ => {
-            return res.send({ status: "OK" })
-        })
-        .catch(err => {
-            if (body._id) {
-                db.client.remove({ _id: body._id });
-                config.es.client.delete({
-                    index: 'crm',
-                    type: 'client',
-                    id: body._id.toString(),
-                })
-            }
-            var mmsg = err;
-            if (err.code == 11000 && /phone_1/.test(err.errmsg)) {
-                mmsg = "Такой номер телефона уже зарегистрирован";
-            }
-            if (err.code == 11000 && /city_1_address_1/.test(err.errmsg)) {
-                mmsg = "Такой адрес уже зарегистрирован";
-            }
-            return res.send({ status: "ERROR", msg: mmsg });
-        });
-    return null;
 
+    })
 })
 
 module.exports = route;

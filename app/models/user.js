@@ -1,5 +1,4 @@
 var db = require("../middleware/db");
-var q = require("bluebird");
 var uuid = require("node-uuid");
 var deportament = db.Schema({
     Id: Number,
@@ -31,6 +30,7 @@ var user = db.Schema({
     NameOfLevelAccess: String
 })
 
+
 var notification = db.Schema({
     user: user,
     message: String,
@@ -38,18 +38,9 @@ var notification = db.Schema({
     closed: Boolean
 });
 
-var events = db.Schema({
-    user: user,
-    start: Date,
-    end: Date,
-    title: String,
-    result: String,
-    closed: Boolean
-})
 
 user.statics.createNewSession = function (userName, userPassword) {
-    console.log("begin auth");
-    return new q(function (resolve, reject) {
+    return new Promise(function (resolve, reject) {
         db.model("User", user).findOne({ Title: userName, Password: userPassword }, function (err, user) {
             if (err) {
                 console.log("auth err", err);
@@ -73,15 +64,14 @@ user.statics.createNewSession = function (userName, userPassword) {
 }
 
 user.methods.isInferior = function (user) {
-    return new q(function (resolve, reject) {
+    return new Promise(function (resolve, reject) {
         // Определить подчиненость
         reject("Нет доступа");
     });
 }
 
 user.statics.getUserBySession = function (session) {
-    return new q(function (resolve, reject) {
-        console.log("Find user with session", session);
+    return new Promise(function (resolve, reject) {
         db.model("User", user).findOne({ session: session }, function (err, user) {
             if (err) {
                 return reject(err);
@@ -95,6 +85,7 @@ user.statics.getUserBySession = function (session) {
 }
 var result = db.model("User", user);
 result.schema = user;
+result.deportament = deportament;
 result.notifications = db.model("Notification", notification);
-result.events = db.model("Event", events);
+//result.events = db.model("Event", events);
 module.exports = result;

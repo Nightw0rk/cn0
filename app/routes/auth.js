@@ -19,7 +19,11 @@ route.post("/login", function (req, res) {
             });
         })
         .catch(function (err, v, d) {
-            res.send(err);
+            res.send({
+                status: "ERROR",
+                msg: err.message,
+                err: err
+            });
         });
 })
 
